@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+defaults:
+  run:
+    working-directory: src
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      BUILD_CONFIG: Release
+      DOTNET_NOLOGO: true
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install .NET Core SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    # Compiles and correlate generated assemblies with the commit.
+    - name: Build
+      run: dotnet build --configuration ${{ env.BUILD_CONFIG }} --no-restore /p:SourceRevisionId=${{ github.sha }}
+
+    # Run tests (unit, integration and fuctional tests) and creates coverage report.
+    - name: Test
+      run: dotnet test --configuration ${{ env.BUILD_CONFIG }} --no-build --verbosity normal
+
+    # Publishes build artifacts for later use.
+    - name: Publish
+      run: dotnet publish --configuration ${{ env.BUILD_CONFIG }} --no-build --output ${{ github.workspace }}/artifact
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2.2.2
+      with:  
+        name: WebApp
+        path: ${{ github.workspace }}/artifact/**/*
+        if-no-files-found: error
+          # Duration after which artifact will expire in days. 0 means using default retention.
+          # Minimum 1 day. Maximum 90 days unless changed from the repository settings page.
+        retention-days: 0
