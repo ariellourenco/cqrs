@@ -7,9 +7,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{4D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Registration", "Registration", "{52A69E20-2AF0-400B-A203-8C72653DA000}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conference.Tests", "Services\Registration\Registration.Tests\Registration.Tests.csproj", "{FC83F1C5-7620-404F-9044-14AB7287C716}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conference.Tests", "src\Services\Registration\Registration.Tests\Registration.Tests.csproj", "{FC83F1C5-7620-404F-9044-14AB7287C716}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Registration.Domain", "Services\Registration\Registration.Domain\Registration.Domain.csproj", "{A5D64CA9-F25F-413D-AAB9-5F2AD04D6500}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Registration.Domain", "src\Services\Registration\Registration.Domain\Registration.Domain.csproj", "{A5D64CA9-F25F-413D-AAB9-5F2AD04D6500}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
