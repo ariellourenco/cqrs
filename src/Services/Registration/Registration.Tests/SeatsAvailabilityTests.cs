@@ -25,17 +25,29 @@ namespace Registration
         }
 
         [Fact]
-        public void WhenReservingLessSeatsThanTotalThenSucceeds()
+        public void WhenReservingLessSeatsThanTotalThenSeatsBecomeUnavailable()
         {
+            // Arrange
             var sut = GivenAvailableSeats();
+
+            // Act
             sut.MakeReservation(Guid.NewGuid(), 4);
+
+            // Assert
+            Assert.Equal(6, sut.RemainingSeats);
         }
 
         [Fact]
-        public void WhenReservingLessSeatsThanRemainingThenSucceeds()
+        public void WhenReservingLessSeatsThanRemainingThenSeatsBecomeUnavailable()
         {
+            // Arrange
             var sut = GivenSomeAvilableSeatsAndSomeTaken();
+
+            // Act
             sut.MakeReservation(Guid.NewGuid(), 4);
+
+            // Assert
+            Assert.Equal(0, sut.RemainingSeats);
         }
 
         [Fact]
@@ -53,17 +65,23 @@ namespace Registration
         }
 
         [Fact]
-        public void WhenReservationExpiresThenSucceeds()
+        public void WhenReservationExpiresThenSeatsBecomeAvailable()
         {
+            // Arrange
             var sut = GivenSomeAvilableSeatsAndSomeTaken();
-            sut.Expires(ReservationId);
+
+            // Act
+            sut.Expire(ReservationId);
+
+            // Assert
+            Assert.Equal(10, sut.RemainingSeats);
         }
 
         [Fact]
         public void WhenReservationExpiresThenCanReuseSeats()
         {
             var sut = GivenSomeAvilableSeatsAndSomeTaken();
-            sut.Expires(ReservationId);
+            sut.Expire(ReservationId);
             sut.MakeReservation(ReservationId, 8);
         }
 
@@ -71,7 +89,35 @@ namespace Registration
         public void WhenAnInexistantReservationExpiresThenFails()
         {
             var sut = GivenSomeAvilableSeatsAndSomeTaken();
-            Assert.Throws<KeyNotFoundException>(() => sut.Expires(Guid.NewGuid()));
+            Assert.Throws<KeyNotFoundException>(() => sut.Expire(Guid.NewGuid()));
+        }
+
+        [Fact]
+        public void WhenReservationIsCommittedThenRemainingSeatsAreNotModified()
+        {
+            // Arrange
+            var sut = GivenSomeAvilableSeatsAndSomeTaken();
+            var remaining = sut.RemainingSeats;
+
+            // Act
+            sut.CommitReservation(ReservationId);
+
+            Assert.Equal(remaining, sut.RemainingSeats);
+        }
+
+        [Fact]
+        public void WhenAnInexistantReservationIsCommittedThenFails()
+        {
+            var sut = GivenSomeAvilableSeatsAndSomeTaken();
+            Assert.Throws<KeyNotFoundException>(() => sut.CommitReservation(Guid.NewGuid()));
+        }
+
+        [Fact]
+        public void WhenReservationIsCommittedThenCannotExpireIt()
+        {
+            var sut = GivenSomeAvilableSeatsAndSomeTaken();
+            sut.CommitReservation(ReservationId);
+            Assert.Throws<KeyNotFoundException>(() => sut.Expire(ReservationId));
         }
     }
 }
