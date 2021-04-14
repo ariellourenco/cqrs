@@ -6,118 +6,157 @@ namespace Registration
 {
     public sealed class SeatsAvailabilityTests
     {
+        private const int AvailableSeats = 10;
+
         private static readonly Guid ReservationId = Guid.NewGuid();
 
-        public SeatsAvailability GivenAvailableSeats()
+        public class AddSeatsMethod
         {
-            var sut = new SeatsAvailability(ReservationId);
-            sut.AddSeats(10);
+            [Theory]
+            [InlineData(17)]
+            public void CanAddSeats(int seats)
+            {
+                // Arrange
+                var sut = new SeatsAvailability(ReservationId);
 
-            return sut;
+                // Act
+                sut.AddSeats(AvailableSeats);
+                sut.AddSeats(seats);
+
+                // Assert
+                Assert.Equal((AvailableSeats + seats), sut.RemainingSeats);
+            }
         }
 
-        public SeatsAvailability GivenSomeAvilableSeatsAndSomeTaken()
+        public class CommitReservationMethod
         {
-            var sut = GivenAvailableSeats();
-            sut.MakeReservation(ReservationId, 6);
+            [Fact]
+            public void CanCommitsReservation()
+            {
+                // Arrange
+                var requested = 6;
+                var remaining = 4;
+                var sut = new SeatsAvailability(ReservationId);
 
-            return sut;
+                sut.AddSeats(AvailableSeats);
+                sut.MakeReservation(ReservationId, requested);
+
+                // Act
+                sut.CommitReservation(ReservationId);
+
+                // Assert
+                Assert.Equal(remaining, sut.RemainingSeats);
+            }
+
+            [Fact]
+            public void ThrowsExceptionWhenCommittingAnExpiredReservation()
+            {
+                // Arrange
+                var requested = 6;
+                var sut = new SeatsAvailability(ReservationId);
+
+                sut.AddSeats(AvailableSeats);
+                sut.MakeReservation(ReservationId, requested);
+                sut.Expire(ReservationId);
+
+                // Act & Assert
+                Assert.Throws<KeyNotFoundException>(() => sut.CommitReservation(Guid.NewGuid()));
+            }
+
+            [Fact]
+            public void ThrowsExceptionWhenCommittingAnInexistantReservation()
+            {
+                // Arrange
+                var requested = 6;
+                var sut = new SeatsAvailability(ReservationId);
+
+                sut.AddSeats(AvailableSeats);
+                sut.MakeReservation(ReservationId, requested);
+
+                // Act & Assert
+                Assert.Throws<KeyNotFoundException>(() => sut.CommitReservation(Guid.NewGuid()));
+            }
         }
 
-        [Fact]
-        public void WhenReservingLessSeatsThanTotalThenSeatsBecomeUnavailable()
+        public class ExpireMethod
         {
-            // Arrange
-            var sut = GivenAvailableSeats();
+            [Fact]
+            public void CanExpireReservation()
+            {
+                // Arrange
+                var requested = 6;
+                var sut = new SeatsAvailability(ReservationId);
 
-            // Act
-            sut.MakeReservation(Guid.NewGuid(), 4);
+                sut.AddSeats(AvailableSeats);
+                sut.MakeReservation(ReservationId, requested);
 
-            // Assert
-            Assert.Equal(6, sut.RemainingSeats);
+                // Act
+                sut.Expire(ReservationId);
+
+                // Assert
+                Assert.Equal(AvailableSeats, sut.RemainingSeats);
+            }
+
+            [Fact]
+            public void ThrowsExceptionWhenExpiringACommittedReservation()
+            {
+                // Arrange
+                var requested = 6;
+                var sut = new SeatsAvailability(ReservationId);
+
+                sut.AddSeats(AvailableSeats);
+                sut.MakeReservation(ReservationId, requested);
+                sut.CommitReservation(ReservationId);
+
+                // Act & Assert
+                Assert.Throws<KeyNotFoundException>(() => sut.Expire(ReservationId));
+            }
+
+            [Fact]
+            public void ThrowsExceptionWhenExpireAnInexistantReservation()
+            {
+                // Arrange
+                var requested = 6;
+                var sut = new SeatsAvailability(ReservationId);
+
+                sut.AddSeats(AvailableSeats);
+                sut.MakeReservation(ReservationId, requested);
+
+                // Act & Assert
+                Assert.Throws<KeyNotFoundException>(() => sut.Expire(Guid.NewGuid()));
+            }
         }
 
-        [Fact]
-        public void WhenReservingLessSeatsThanRemainingThenSeatsBecomeUnavailable()
+        public class MakeReservationMethod
         {
-            // Arrange
-            var sut = GivenSomeAvilableSeatsAndSomeTaken();
+            [Fact]
+            public void ReservesSeatsWhenRequestingLessSeatsThanTotal()
+            {
+                // Arrange
+                var requested = 6;
+                var remaining = 4;
+                var sut = new SeatsAvailability(ReservationId);
 
-            // Act
-            sut.MakeReservation(Guid.NewGuid(), 4);
+                // Act
+                sut.AddSeats(AvailableSeats);
+                sut.MakeReservation(ReservationId, requested);
 
-            // Assert
-            Assert.Equal(0, sut.RemainingSeats);
-        }
+                // Assert
+                Assert.Equal(remaining, sut.RemainingSeats);
+            }
 
-        [Fact]
-        public void WhenReservingMoreSeatsThanTotalThenFails()
-        {
-            var sut = GivenAvailableSeats();
-            Assert.Throws<ArgumentOutOfRangeException>(() => sut.MakeReservation(Guid.NewGuid(), 11));
-        }
+            [Fact]
+            public void ThrowsExceptionWhenReservingMoreSeatsThanTotal()
+            {
+                // Arrange
+                var requested = 11;
+                var sut = new SeatsAvailability(ReservationId);
 
-        [Fact]
-        public void WhenReservingMoreSeatsThanRemainingThenFails()
-        {
-            var sut = GivenSomeAvilableSeatsAndSomeTaken();
-            Assert.Throws<ArgumentOutOfRangeException>(() => sut.MakeReservation(Guid.NewGuid(), 5));
-        }
+                sut.AddSeats(AvailableSeats);
 
-        [Fact]
-        public void WhenReservationExpiresThenSeatsBecomeAvailable()
-        {
-            // Arrange
-            var sut = GivenSomeAvilableSeatsAndSomeTaken();
-
-            // Act
-            sut.Expire(ReservationId);
-
-            // Assert
-            Assert.Equal(10, sut.RemainingSeats);
-        }
-
-        [Fact]
-        public void WhenReservationExpiresThenCanReuseSeats()
-        {
-            var sut = GivenSomeAvilableSeatsAndSomeTaken();
-            sut.Expire(ReservationId);
-            sut.MakeReservation(ReservationId, 8);
-        }
-
-        [Fact]
-        public void WhenAnInexistantReservationExpiresThenFails()
-        {
-            var sut = GivenSomeAvilableSeatsAndSomeTaken();
-            Assert.Throws<KeyNotFoundException>(() => sut.Expire(Guid.NewGuid()));
-        }
-
-        [Fact]
-        public void WhenReservationIsCommittedThenRemainingSeatsAreNotModified()
-        {
-            // Arrange
-            var sut = GivenSomeAvilableSeatsAndSomeTaken();
-            var remaining = sut.RemainingSeats;
-
-            // Act
-            sut.CommitReservation(ReservationId);
-
-            Assert.Equal(remaining, sut.RemainingSeats);
-        }
-
-        [Fact]
-        public void WhenAnInexistantReservationIsCommittedThenFails()
-        {
-            var sut = GivenSomeAvilableSeatsAndSomeTaken();
-            Assert.Throws<KeyNotFoundException>(() => sut.CommitReservation(Guid.NewGuid()));
-        }
-
-        [Fact]
-        public void WhenReservationIsCommittedThenCannotExpireIt()
-        {
-            var sut = GivenSomeAvilableSeatsAndSomeTaken();
-            sut.CommitReservation(ReservationId);
-            Assert.Throws<KeyNotFoundException>(() => sut.Expire(ReservationId));
+                // Act & Assert
+                Assert.Throws<ArgumentOutOfRangeException>(() => sut.MakeReservation(ReservationId, requested));
+            }
         }
     }
 }
