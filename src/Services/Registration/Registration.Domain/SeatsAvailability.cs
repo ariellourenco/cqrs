@@ -6,10 +6,8 @@ namespace Registration
     /// <summary>
     /// Manages the availability of conference seats.
     /// </summary>
-    public sealed class SeatsAvailability
+    public sealed class SeatsAvailability : Entity, IAggregateRoot
     {
-        private readonly Guid _id;
-
         // Using a private collection field for better encapsulation so new reservations can
         // not be added from "outside" of SeatsAvailability aggregate directly to the collection,
         // but only through the method SeatsAvailability.MakeReservation() which includes behaviour.
@@ -20,16 +18,14 @@ namespace Registration
         /// </summary>
         /// <param name="id">A unique identifier for this <see cref="SeatsAvailability"/> instance.</param>
         public SeatsAvailability(Guid id)
-        {
-            _id = id;
-        }
+            : base(id) { }
 
         public int RemainingSeats { get; set; }
 
         /// <summary>
         /// Increases the number of seats available.
         /// </summary>
-        /// <param name="quantity">The number of seats available.</param>
+        /// <param name="quantity">The number of seats to add.</param>
         public void AddSeats(int quantity)
         {
             RemainingSeats += quantity;
