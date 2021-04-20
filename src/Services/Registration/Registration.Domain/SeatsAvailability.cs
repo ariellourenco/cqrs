@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Registration
+namespace CQRSJourney.Registration
 {
     /// <summary>
     /// Manages the availability of conference seats.

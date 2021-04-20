@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Infrastructure.EventBus.Abstractions
+namespace CQRSJourney.Infrastructure.EventBus.Abstractions
 {
     /// <summary>
     /// Provides a way for systems to communicate without knowing about each other.

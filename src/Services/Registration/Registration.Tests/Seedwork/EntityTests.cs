@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace Registration
+namespace CQRSJourney.Registration
 {
     public sealed class EntityTests
     {

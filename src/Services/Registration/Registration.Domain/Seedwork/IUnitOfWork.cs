@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Registration
+namespace CQRSJourney.Registration
 {
     /// <summary>
     /// A thin wrapper interface for <see cref="DbContext"/> intended to encapsulate the infrastructure persistence layer

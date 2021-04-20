@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Registration
+namespace CQRSJourney.Registration
 {
     /// <summary>
     /// The default implementation of <see cref="Entity{TKey}"/> which uses a <see cref="Guid"/>

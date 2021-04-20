@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Registration
+namespace CQRSJourney.Registration
 {
     public sealed class SeatsAvailabilityTests
     {
