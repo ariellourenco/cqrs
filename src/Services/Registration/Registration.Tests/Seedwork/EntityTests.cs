@@ -6,6 +6,36 @@ namespace Registration
     public sealed class EntityTests
     {
         [Fact]
+        public void CanAddDomainEvents()
+        {
+            // Arrange
+            var entity = new SampleEntity();
+            var @event = new {};
+
+            // Act
+            entity.AddEvent(@event);
+
+            // Assert
+            Assert.Contains(@event, entity.DomainEvents);
+        }
+
+        [Fact]
+        public void CanClearDomainEvents()
+        {
+            // Arrange
+            var entity = new SampleEntity();
+            var @event = new {};
+
+            entity.AddEvent(@event);
+
+            // Act
+            entity.ClearEvents();
+
+            // Assert
+            Assert.Empty(entity.DomainEvents);
+        }
+
+        [Fact]
         public void Equals_CompareSameIdentity_ReturnTrue()
         {
             // Arrange

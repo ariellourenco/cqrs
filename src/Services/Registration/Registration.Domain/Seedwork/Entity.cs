@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Registration
 {
@@ -31,10 +32,39 @@ namespace Registration
     {
         private int? _requestedHashCode;
 
+        private List<object> _domainEvents;
+
         /// <summary>
         /// A unique identifier for this <see cref="Entity{TKey}"/> instance.
         /// </summary>
         public TKey Id { get; protected set; }
+
+        /// <summary>
+        /// Gets all events domain events for this entity.
+        /// </summary>
+        public IReadOnlyCollection<object> DomainEvents => _domainEvents?.AsReadOnly();
+
+        /// <summary>
+        /// Adds the specified domain event to the events list.
+        /// </summary>
+        /// <param name="event">The domain event to add.</param>
+        /// <remarks>
+        /// AddEvent is not intended for adding many events over a long period of time, because the event objects
+        /// are stored in memory. Adding too many events to the same Entity object can impact app performance.
+        /// </remarks>
+        public void AddEvent(object @event)
+        {
+            _domainEvents = _domainEvents ?? new List<object>();
+            _domainEvents.Add(@event);
+        }
+
+        /// <summary>
+        /// Removes all domain events from the events list.
+        /// </summary>
+        public void ClearEvents()
+        {
+            _domainEvents?.Clear();
+        }
 
         /// <inheritdoc />
         public override bool Equals(object obj)
