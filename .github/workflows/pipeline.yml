@@ -19,12 +19,6 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
 
-    # Initializes the CodeQL tools for scanning.
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v1
-      with:
-        languages: csharp
-
     - name: Install .NET Core SDK
       uses: actions/setup-dotnet@v1
       with:
@@ -52,9 +46,6 @@ jobs:
       with:
         files: ${{ github.workspace }}/report/coverage.opencover.xml
         fail_ci_if_error: false 
-
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
 
     # Publishes build artifacts for later use.
     - name: Publish
