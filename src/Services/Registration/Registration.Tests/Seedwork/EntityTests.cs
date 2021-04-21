@@ -1,4 +1,5 @@
 using System;
+using MediatR;
 using Xunit;
 
 namespace CQRSJourney.Registration
@@ -10,7 +11,7 @@ namespace CQRSJourney.Registration
         {
             // Arrange
             var entity = new SampleEntity();
-            var @event = new {};
+            var @event = new Ping();
 
             // Act
             entity.AddEvent(@event);
@@ -24,7 +25,7 @@ namespace CQRSJourney.Registration
         {
             // Arrange
             var entity = new SampleEntity();
-            var @event = new {};
+            var @event = new Ping();
 
             entity.AddEvent(@event);
 
@@ -174,6 +175,11 @@ namespace CQRSJourney.Registration
             }
 
             public SampleEntity(Guid id) => Id = id;
+        }
+
+        private class Ping : INotification
+        {
+            public string Message { get; set; }
         }
     }
 }

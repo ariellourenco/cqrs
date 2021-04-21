@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using MediatR;
 
 namespace CQRSJourney.Registration
 {
@@ -32,7 +33,7 @@ namespace CQRSJourney.Registration
     {
         private int? _requestedHashCode;
 
-        private List<object> _domainEvents;
+        private List<INotification> _domainEvents;
 
         /// <summary>
         /// A unique identifier for this <see cref="Entity{TKey}"/> instance.
@@ -42,7 +43,7 @@ namespace CQRSJourney.Registration
         /// <summary>
         /// Gets all events domain events for this entity.
         /// </summary>
-        public IReadOnlyCollection<object> DomainEvents => _domainEvents?.AsReadOnly();
+        public IReadOnlyCollection<INotification> DomainEvents => _domainEvents?.AsReadOnly();
 
         /// <summary>
         /// Adds the specified domain event to the events list.
@@ -52,9 +53,9 @@ namespace CQRSJourney.Registration
         /// AddEvent is not intended for adding many events over a long period of time, because the event objects
         /// are stored in memory. Adding too many events to the same Entity object can impact app performance.
         /// </remarks>
-        public void AddEvent(object @event)
+        public void AddEvent(INotification @event)
         {
-            _domainEvents = _domainEvents ?? new List<object>();
+            _domainEvents = _domainEvents ?? new List<INotification>();
             _domainEvents.Add(@event);
         }
 
