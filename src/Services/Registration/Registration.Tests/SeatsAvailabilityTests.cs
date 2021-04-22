@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace CQRSJourney.Registration
@@ -119,7 +120,7 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
-        public void MakeReservation_WhenRequestingLessSeatsThanTotal()
+        public void MakeReservation_WhenRequestingLessSeatsThanTotal_ReducesRemaningSeats()
         {
             // Arrange
             var requested = 6;
@@ -132,6 +133,7 @@ namespace CQRSJourney.Registration
 
             // Assert
             Assert.Equal(remaining, sut.RemainingSeats);
+            Assert.Equal(ReservationId, ((SeatsReserved)sut.DomainEvents.Single()).ReservationId);
         }
 
         [Fact]

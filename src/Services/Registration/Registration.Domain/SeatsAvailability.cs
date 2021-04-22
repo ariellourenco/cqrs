@@ -53,6 +53,8 @@ namespace CQRSJourney.Registration
 
             _pendingReservations.Add(reservationId, numberOfSeats);
             RemainingSeats -= numberOfSeats;
+
+            this.AddEvent(new SeatsReserved(reservationId));
         }
 
         public void Expire(Guid reservationId)
