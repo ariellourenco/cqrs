@@ -74,12 +74,7 @@ namespace CQRSJourney.Registration
             if ((obj == null) || !this.GetType().Equals(obj.GetType()))
                 return false;
 
-            if (Object.ReferenceEquals(this, obj))
-                return true;
-
-            Entity<TKey> item = (Entity<TKey>)obj;
-
-            return item.Id.Equals(this.Id);
+            return ((Entity<TKey>)obj).Id.Equals(this.Id);
         }
 
         /// <inheritdoc />
@@ -98,8 +93,8 @@ namespace CQRSJourney.Registration
 
         public static bool operator ==(Entity<TKey> left, Entity<TKey> right)
         {
-            if (Object.Equals(left, null))
-                return Object.Equals(right, null) ? true : false;
+            if (object.Equals(left, null))
+                return object.Equals(right, null) ? true : false;
 
             return left.Equals(right);
         }

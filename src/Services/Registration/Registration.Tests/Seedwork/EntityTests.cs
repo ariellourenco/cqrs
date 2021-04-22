@@ -27,9 +27,8 @@ namespace CQRSJourney.Registration
             var entity = new SampleEntity();
             var @event = new Ping();
 
-            entity.AddEvent(@event);
-
             // Act
+            entity.AddEvent(@event);
             entity.ClearEvents();
 
             // Assert
@@ -37,7 +36,7 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
-        public void Equals_CompareSameIdentity_ReturnTrue()
+        public void Equals_ComparesSameIdentity_ReturnsTrue()
         {
             // Arrange
             var id = Guid.NewGuid();
@@ -53,7 +52,7 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
-        public void Equals_CompareSameReference_ReturnTrue()
+        public void Equals_ComparesSameReference_ReturnsTrue()
         {
             // Arrange
             var entityLeft = new SampleEntity();
@@ -67,7 +66,7 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
-        public void Equals_CompareDifferentIdentity_ReturnFalse()
+        public void Equals_ComparesDifferentIdentity_ReturnsFalse()
         {
             // Arrange
             var entityLeft = new SampleEntity();
@@ -81,7 +80,7 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
-        public void Equals_CompareDifferentRuntimeType_ReturnFalse()
+        public void Equals_ComparesDifferentRuntimeType_ReturnsFalse()
         {
             // Arrange
             var entityLeft = new SampleEntity();
@@ -93,7 +92,7 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
-        public void Equals_CompareNullReference_ReturnFalse()
+        public void Equals_ComparesNullReference_ReturnsFalse()
         {
             // Arrange
             var entityLeft = new SampleEntity();
@@ -106,7 +105,7 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
-        public void Equals_CompareWhenBothOperandsAreNull_ReturnTrue()
+        public void Equals_ComparesWhenBothOperandsAreNull_ReturnsTrue()
         {
             // Arrange
             var entityLeft = (SampleEntity)null;
@@ -118,7 +117,7 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
-        public void DifferentOperator_CompareSameIdentity_ReturnFalse()
+        public void DifferentOperator_ComparesSameIdentity_ReturnsFalse()
         {
             // Arrange
             var id = Guid.NewGuid();
@@ -132,7 +131,7 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
-        public void DifferentOperator_CompareDifferentIdentity_ReturnTrue()
+        public void DifferentOperator_ComparesDifferentIdentity_ReturnsTrue()
         {
             // Arrange
             var entityLeft = new SampleEntity();
@@ -144,7 +143,7 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
-        public void GetHashCode_ForEqualIdentity_ReturnSameHashCode()
+        public void GetHashCode_ForEqualIdentity_ReturnsSameHashCode()
         {
             // Arrange
             var id = Guid.NewGuid();
@@ -157,7 +156,7 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
-        public void GetHashCode_ForDifferentIdentity_ReturnDifferentHashCode()
+        public void GetHashCode_ForDifferentIdentity_ReturnsDifferentHashCode()
         {
             // Arrange
             var entity1 = new SampleEntity();
@@ -170,9 +169,7 @@ namespace CQRSJourney.Registration
         private class SampleEntity : Entity
         {
 
-            public SampleEntity()
-            {
-            }
+            public SampleEntity() { }
 
             public SampleEntity(Guid id) => Id = id;
         }
