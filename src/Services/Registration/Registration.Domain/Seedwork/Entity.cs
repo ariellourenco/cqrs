@@ -33,7 +33,7 @@ namespace CQRSJourney.Registration
     {
         private int? _requestedHashCode;
 
-        private List<INotification> _domainEvents;
+        private List<INotification> _events;
 
         /// <summary>
         /// A unique identifier for this <see cref="Entity{TKey}"/> instance.
@@ -41,9 +41,9 @@ namespace CQRSJourney.Registration
         public TKey Id { get; protected set; }
 
         /// <summary>
-        /// Gets all events domain events for this entity.
+        /// Gets a list of domain events that can be subscribed to.
         /// </summary>
-        public IReadOnlyCollection<INotification> DomainEvents => _domainEvents?.AsReadOnly();
+        public IReadOnlyCollection<INotification> Events => _events?.AsReadOnly();
 
         /// <summary>
         /// Adds the specified domain event to the events list.
@@ -55,8 +55,8 @@ namespace CQRSJourney.Registration
         /// </remarks>
         public void AddEvent(INotification @event)
         {
-            _domainEvents = _domainEvents ?? new List<INotification>();
-            _domainEvents.Add(@event);
+            _events = _events ?? new List<INotification>();
+            _events.Add(@event);
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace CQRSJourney.Registration
         /// </summary>
         public void ClearEvents()
         {
-            _domainEvents?.Clear();
+            _events?.Clear();
         }
 
         /// <inheritdoc />

@@ -7,7 +7,7 @@ namespace CQRSJourney.Registration
     public sealed class EntityTests
     {
         [Fact]
-        public void CanAddDomainEvents()
+        public void CanAddEvents()
         {
             // Arrange
             var entity = new SampleEntity();
@@ -17,7 +17,18 @@ namespace CQRSJourney.Registration
             entity.AddEvent(@event);
 
             // Assert
-            Assert.Contains(@event, entity.DomainEvents);
+            Assert.NotNull(entity.Events);
+            Assert.Contains(@event, entity.Events);
+        }
+
+        [Fact]
+        public void EmptyEventListReturnsNull()
+        {
+            // Arrange
+            var entity = new SampleEntity();
+
+            // Act & Assert
+            Assert.Null(entity.Events);
         }
 
         [Fact]
@@ -32,7 +43,7 @@ namespace CQRSJourney.Registration
             entity.ClearEvents();
 
             // Assert
-            Assert.Empty(entity.DomainEvents);
+            Assert.Empty(entity.Events);
         }
 
         [Fact]
@@ -168,7 +179,6 @@ namespace CQRSJourney.Registration
 
         private class SampleEntity : Entity
         {
-
             public SampleEntity() { }
 
             public SampleEntity(Guid id) => Id = id;
