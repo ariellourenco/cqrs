@@ -11,142 +11,50 @@ namespace CQRSJourney.Registration
 
         private static readonly Guid ReservationId = Guid.NewGuid();
 
+        private static readonly Guid SeatTypeId = Guid.NewGuid();
+
+
         [Fact]
-        public void CanAddSeats()
+        public void RequestingLessSeatsThanTotal_ReservesAllRequestedSeats()
         {
             // Arrange
-            var seats = 10;
             var sut = new SeatsAvailability(ReservationId);
 
             // Act
-            sut.AddSeats(AvailableSeats);
-            sut.AddSeats(seats);
+            sut.AddSeats(SeatTypeId, AvailableSeats);
+            sut.MakeReservation(ReservationId, new[] { new SeatQuantity(SeatTypeId, 8) });
 
             // Assert
-            Assert.Equal((AvailableSeats + seats), sut.RemainingSeats);
+            Assert.Equal(ReservationId, ((SeatsReserved)sut.Events.Single()).ReservationId);
+            Assert.Equal(SeatTypeId, ((SeatsReserved)sut.Events.Single()).Details.ElementAt(0).SeatType);
+            Assert.Equal(8, ((SeatsReserved)sut.Events.Single()).Details.ElementAt(0).Quantity);
         }
 
         [Fact]
-        public void CanCommitsReservation()
+        public void RequestingMoreSeatsThanTotal_ReservingAllAvailableSeats()
         {
             // Arrange
-            var requested = 6;
-            var remaining = 4;
-            var sut = new SeatsAvailability(ReservationId);
-
-            sut.AddSeats(AvailableSeats);
-            sut.MakeReservation(ReservationId, requested);
-
-            // Act
-            sut.CommitReservation(ReservationId);
-
-            // Assert
-            Assert.Equal(remaining, sut.RemainingSeats);
-        }
-
-        [Fact]
-        public void CommitReservation_WhenReservationIsExpired_Throws()
-        {
-            // Arrange
-            var requested = 6;
-            var sut = new SeatsAvailability(ReservationId);
-
-            sut.AddSeats(AvailableSeats);
-            sut.MakeReservation(ReservationId, requested);
-            sut.Expire(ReservationId);
-
-            // Act & Assert
-            Assert.Throws<KeyNotFoundException>(() => sut.CommitReservation(Guid.NewGuid()));
-        }
-
-        [Fact]
-        public void CommitReservation_WhenReservationIsInexistant_Throws()
-        {
-            // Arrange
-            var requested = 6;
-            var sut = new SeatsAvailability(ReservationId);
-
-            sut.AddSeats(AvailableSeats);
-            sut.MakeReservation(ReservationId, requested);
-
-            // Act & Assert
-            Assert.Throws<KeyNotFoundException>(() => sut.CommitReservation(Guid.NewGuid()));
-        }
-
-        [Fact]
-        public void CanExpireReservation()
-        {
-            // Arrange
-            var requested = 6;
-            var sut = new SeatsAvailability(ReservationId);
-
-            sut.AddSeats(AvailableSeats);
-            sut.MakeReservation(ReservationId, requested);
-
-            // Act
-            sut.Expire(ReservationId);
-
-            // Assert
-            Assert.Equal(AvailableSeats, sut.RemainingSeats);
-        }
-
-        [Fact]
-        public void Expire_WhenReservationIsCommitted_Throws()
-        {
-            // Arrange
-            var requested = 6;
-            var sut = new SeatsAvailability(ReservationId);
-
-            sut.AddSeats(AvailableSeats);
-            sut.MakeReservation(ReservationId, requested);
-            sut.CommitReservation(ReservationId);
-
-            // Act & Assert
-            Assert.Throws<KeyNotFoundException>(() => sut.Expire(ReservationId));
-        }
-
-        [Fact]
-        public void Expire_WhenReservationIsInexistant_Throws()
-        {
-            // Arrange
-            var requested = 6;
-            var sut = new SeatsAvailability(ReservationId);
-
-            sut.AddSeats(AvailableSeats);
-            sut.MakeReservation(ReservationId, requested);
-
-            // Act & Assert
-            Assert.Throws<KeyNotFoundException>(() => sut.Expire(Guid.NewGuid()));
-        }
-
-        [Fact]
-        public void MakeReservation_WhenRequestingLessSeatsThanTotal_ReducesRemaningSeats()
-        {
-            // Arrange
-            var requested = 6;
-            var remaining = 4;
             var sut = new SeatsAvailability(ReservationId);
 
             // Act
-            sut.AddSeats(AvailableSeats);
-            sut.MakeReservation(ReservationId, requested);
+            sut.AddSeats(SeatTypeId, AvailableSeats);
+            sut.MakeReservation(ReservationId, new[] { new SeatQuantity(SeatTypeId, 12) });
 
             // Assert
-            Assert.Equal(remaining, sut.RemainingSeats);
-            Assert.Equal(ReservationId, ((SeatsReserved)sut.DomainEvents.Single()).ReservationId);
+            Assert.Equal(ReservationId, ((SeatsReserved)sut.Events.Single()).ReservationId);
+            Assert.Equal(SeatTypeId, ((SeatsReserved)sut.Events.Single()).Details.ElementAt(0).SeatType);
+            Assert.Equal(AvailableSeats, ((SeatsReserved)sut.Events.Single()).Details.ElementAt(0).Quantity);
         }
 
         [Fact]
-        public void MakeReservation_WhenReservingMoreSeatsThanTotal_Throws()
+        public void RequestingAnInexistantSeatType_Throws()
         {
             // Arrange
-            var requested = 11;
             var sut = new SeatsAvailability(ReservationId);
 
-            sut.AddSeats(AvailableSeats);
-
             // Act & Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => sut.MakeReservation(ReservationId, requested));
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                sut.MakeReservation(ReservationId, new[] { new SeatQuantity(Guid.NewGuid(), 7) }));
         }
     }
 }
