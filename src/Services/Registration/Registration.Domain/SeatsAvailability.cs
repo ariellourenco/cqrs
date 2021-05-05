@@ -38,11 +38,11 @@ namespace CQRSJourney.Registration
         /// Stores the reservation in the data store. This may throw if the data store is unavailable.
         /// </summary>
         /// <param name="reservationId">A unique identifier for the reservation request.</param>
-        public void CommitReservation(Guid reservationId)
-        {
-            var numberOfSeats = _pendingReservations[reservationId];
-            _pendingReservations.Remove(reservationId);
-        }
+        // public void CommitReservation(Guid reservationId)
+        // {
+        //     var numberOfSeats = _pendingReservations[reservationId];
+        //     _pendingReservations.Remove(reservationId);
+        // }
 
         /// <summary>
         /// Requests a reservation for seats.
@@ -68,14 +68,28 @@ namespace CQRSJourney.Registration
             // seats are labeled as pending and should be take into account before accept new reservations.
             if (_pendingReservations.TryGetValue(reservationId, out var pending))
             {
+                // Updates a reservation made previously.
                 foreach (var item in pending)
                     reservation.GetOrAdd(item.SeatType).Pending = item.Quantity;
             }
 
+            var changes = reservation.Select(x => new SeatQuantity(x.Key, -x.Value.Difference))
+                    .Where(x => x.Quantity != 0)
+                    .ToList();
+
+            _pendingReservations[reservationId] = reservation.Select(x => new SeatQuantity(x.Key, x.Value.Actual))
+                .Where(x => x.Quantity != 0)
+                .ToList();
+
+
+            changes.ForEach(seat => _remainingSeats[seat.SeatType] += seat.Quantity);
+
+            // Add the SeatsReserved to the domain events collection to be raised/dispatched
+            // when comitting changes into the Database.
             this.AddEvent(new SeatsReserved(
                 id: reservationId,
-                details: reservation.Select(x => new SeatQuantity(x.Key, x.Value.Actual)).Where(x => x.Quantity > 0).ToList(),
-                availabilityChanged: reservation.Select(x => new SeatQuantity(x.Key, x.Value.Difference)).Where(x => x.Quantity > 0).ToList()));
+                details: _pendingReservations[reservationId],
+                availableSeatsChanged: changes));
         }
 
         /// <summary>

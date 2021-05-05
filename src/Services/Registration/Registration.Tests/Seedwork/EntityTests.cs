@@ -22,17 +22,20 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
-        public void EmptyEventListReturnsNull()
+        public void ClearEvents_DoesNothing_IfNoEventsAreAdded()
         {
             // Arrange
             var entity = new SampleEntity();
 
-            // Act & Assert
+            // Act
+            entity.ClearEvents();
+
+            // Assert
             Assert.Null(entity.Events);
         }
 
         [Fact]
-        public void CanClearDomainEvents()
+        public void ClearEvents_RemovesAllEventsAdded()
         {
             // Arrange
             var entity = new SampleEntity();
