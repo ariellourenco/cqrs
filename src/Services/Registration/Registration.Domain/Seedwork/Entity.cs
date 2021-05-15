@@ -35,6 +35,8 @@ namespace CQRSJourney.Registration
 
         private List<INotification> _events;
 
+        private readonly Dictionary<Type, Action<INotification>> _handlers = new Dictionary<Type, Action<INotification>>();
+
         /// <summary>
         /// A unique identifier for this <see cref="Entity{TKey}"/> instance.
         /// </summary>
@@ -48,15 +50,20 @@ namespace CQRSJourney.Registration
         /// <summary>
         /// Adds the specified domain event to the events list.
         /// </summary>
-        /// <param name="event">The domain event to add.</param>
         /// <remarks>
-        /// AddEvent is not intended for adding many events over a long period of time, because the event objects
-        /// are stored in memory. Adding too many events to the same Entity object can impact app performance.
+        /// This method is not intended for adding many events over a long period of time,
+        /// because the event objects are stored in memory and adding too many events to
+        /// the same Entity object can impact app performance.
         /// </remarks>
+        /// <param name="event">The domain event to add.</param>
         public void AddEvent(INotification @event)
         {
             _events = _events ?? new List<INotification>();
             _events.Add(@event);
+
+            // If we have a handler registered for the event then invoke it.
+            if (_handlers.TryGetValue(@event.GetType(), out var handler))
+                handler.Invoke(@event);
         }
 
         /// <summary>
@@ -65,6 +72,17 @@ namespace CQRSJourney.Registration
         public void ClearEvents()
         {
             _events?.Clear();
+        }
+
+        /// <summary>
+        /// Registers a handler that will be invoked when the specified domain event is fired.
+        /// </summary>
+        /// <typeparam name="TEvent">The type of the domain event handled.</typeparam>
+        /// <param name="handler">A delegate to handle the domain event.</param>
+        protected void Handles<TEvent>(Action<TEvent> handler)
+            where TEvent : INotification
+        {
+            _handlers.Add(typeof(TEvent), @event => handler((TEvent)@event));
         }
 
         /// <inheritdoc />

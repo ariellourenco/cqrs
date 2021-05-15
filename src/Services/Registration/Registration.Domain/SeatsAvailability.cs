@@ -21,8 +21,10 @@ namespace CQRSJourney.Registration
         /// Inititializes a new instance of <see cref="SeatsAvailability"/> class.
         /// </summary>
         /// <param name="id">A unique identifier for this <see cref="SeatsAvailability"/> instance.</param>
-        public SeatsAvailability(Guid id)
-            : base(id) { }
+        public SeatsAvailability(Guid id) : base(id)
+        {
+            base.Handles<SeatsReserved>(OnSeatsReserved);
+        }
 
         /// <summary>
         /// Increases the number of seats available.
@@ -64,8 +66,8 @@ namespace CQRSJourney.Registration
                 entry.Remaining = _remainingSeats[item.SeatType];
             }
 
-            // When a reservation request hasn't been completed yet, which means the order paid hasn't been paid,
-            // seats are labeled as pending and should be take into account before accept new reservations.
+            // When a reservation request hasn't been completed yet it is added to the peding list.
+            // Therefore, before make a new reservation we need to check this list first.
             if (_pendingReservations.TryGetValue(reservationId, out var pending))
             {
                 // Updates a reservation made previously.
@@ -73,23 +75,20 @@ namespace CQRSJourney.Registration
                     reservation.GetOrAdd(item.SeatType).Pending = item.Quantity;
             }
 
-            var changes = reservation.Select(x => new SeatQuantity(x.Key, -x.Value.Difference))
-                    .Where(x => x.Quantity != 0)
-                    .ToList();
-
-            _pendingReservations[reservationId] = reservation.Select(x => new SeatQuantity(x.Key, x.Value.Actual))
-                .Where(x => x.Quantity != 0)
-                .ToList();
-
-
-            changes.ForEach(seat => _remainingSeats[seat.SeatType] += seat.Quantity);
-
             // Add the SeatsReserved to the domain events collection to be raised/dispatched
             // when comitting changes into the Database.
-            this.AddEvent(new SeatsReserved(
+            AddEvent(new SeatsReserved(
                 id: reservationId,
-                details: _pendingReservations[reservationId],
-                availableSeatsChanged: changes));
+                details: reservation.Select(x => new SeatQuantity(x.Key, x.Value.Actual)).Where(x =>x.Quantity != 0).ToList(),
+                availableSeatsChanged: reservation.Select(x => new SeatQuantity(x.Key, -x.Value.Difference)).Where(x => x.Quantity != 0).ToList()));
+        }
+
+        private void OnSeatsReserved(SeatsReserved @event)
+        {
+            _pendingReservations[@event.ReservationId] = @event.Details.ToList();
+
+            foreach (var seat in @event.AvailableSeatsChanged)
+                _remainingSeats[seat.SeatType] += seat.Quantity;
         }
 
         /// <summary>
