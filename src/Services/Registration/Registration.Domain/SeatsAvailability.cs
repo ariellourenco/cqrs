@@ -25,6 +25,7 @@ namespace CQRSJourney.Registration
         public SeatsAvailability(Guid id) : base(id)
         {
             base.Handles<AvailableSeatsChanged>(OnSeatsChanged);
+            base.Handles<SeatsReservationCommitted>(OnReservationCommitted);
             base.Handles<SeatsReserved>(OnSeatsReserved);
         }
 
@@ -39,14 +40,14 @@ namespace CQRSJourney.Registration
         }
 
         /// <summary>
-        /// Stores the reservation in the data store. This may throw if the data store is unavailable.
+        /// Confirms the reservation and removes it from the pending list.
         /// </summary>
         /// <param name="reservationId">A unique identifier for the reservation request.</param>
-        // public void CommitReservation(Guid reservationId)
-        // {
-        //     var numberOfSeats = _pendingReservations[reservationId];
-        //     _pendingReservations.Remove(reservationId);
-        // }
+        public void CommitReservation(Guid reservationId)
+        {
+            if (_pendingReservations.ContainsKey(reservationId))
+                AddEvent(new SeatsReservationCommitted(reservationId));
+        }
 
         /// <summary>
         /// Requests a reservation for seats.
@@ -84,6 +85,9 @@ namespace CQRSJourney.Registration
                 details: reservation.Select(x => new SeatQuantity(x.Key, x.Value.Actual)).Where(x =>x.Quantity != 0).ToList(),
                 availableSeatsChanged: reservation.Select(x => new SeatQuantity(x.Key, -x.Value.Difference)).Where(x => x.Quantity != 0).ToList()));
         }
+
+        private void OnReservationCommitted(SeatsReservationCommitted @event) =>
+            _pendingReservations.Remove(@event.ReservationId);
 
         private void OnSeatsChanged(AvailableSeatsChanged @event)
         {

@@ -44,6 +44,36 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
+        public void CanCommitReservation()
+        {
+            // Arrange
+            var sut = new SeatsAvailability(ReservationId);
+
+            // Act
+            sut.AddSeats(SeatTypeId, AvailableSeats);
+            sut.MakeReservation(ReservationId, new[] { new SeatQuantity(SeatTypeId, 3) });
+            sut.CommitReservation(ReservationId);
+
+            // Assert
+            Assert.Equal(ReservationId, ((SeatsReservationCommitted)sut.Events.LastOrDefault()).ReservationId);
+        }
+
+        [Fact]
+        public void CommittingNonExistingReservation_DoNothing()
+        {
+            // Arrange
+            var sut = new SeatsAvailability(ReservationId);
+
+            // Act
+            sut.AddSeats(SeatTypeId, AvailableSeats);
+            sut.MakeReservation(ReservationId, new[] { new SeatQuantity(SeatTypeId, 3) });
+            sut.CommitReservation(Guid.NewGuid());
+
+            // Assert
+            Assert.DoesNotContain(sut.Events, e => e.GetType() == typeof(SeatsReservationCommitted));
+        }
+
+        [Fact]
         public void RequestingLessSeatsThanTotal_ReservesAllRequestedSeats()
         {
             // Arrange

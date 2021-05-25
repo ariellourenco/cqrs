@@ -12,6 +12,7 @@ namespace CQRSJourney.Registration.Events
         /// <summary>
         /// Gets the unique identifier for this reservation.
         /// </summary>
+        /// <value>The unique identifier for this reservation.</value>
         public Guid ReservationId { get; }
 
         /// <summary>
