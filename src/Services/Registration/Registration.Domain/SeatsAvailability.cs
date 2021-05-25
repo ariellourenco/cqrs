@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CQRSJourney.Registration.Events;
 using CQRSJourney.Registration.Extensions;
 
 namespace CQRSJourney.Registration
@@ -23,6 +24,7 @@ namespace CQRSJourney.Registration
         /// <param name="id">A unique identifier for this <see cref="SeatsAvailability"/> instance.</param>
         public SeatsAvailability(Guid id) : base(id)
         {
+            base.Handles<AvailableSeatsChanged>(OnSeatsChanged);
             base.Handles<SeatsReserved>(OnSeatsReserved);
         }
 
@@ -33,7 +35,7 @@ namespace CQRSJourney.Registration
         /// <param name="quantity">The number of seats to add.</param>
         public void AddSeats(Guid seatType, int quantity)
         {
-            _remainingSeats.Add(seatType, quantity);
+            AddEvent(new AvailableSeatsChanged(new[] { new SeatQuantity(seatType, quantity) }));
         }
 
         /// <summary>
@@ -81,6 +83,19 @@ namespace CQRSJourney.Registration
                 id: reservationId,
                 details: reservation.Select(x => new SeatQuantity(x.Key, x.Value.Actual)).Where(x =>x.Quantity != 0).ToList(),
                 availableSeatsChanged: reservation.Select(x => new SeatQuantity(x.Key, -x.Value.Difference)).Where(x => x.Quantity != 0).ToList()));
+        }
+
+        private void OnSeatsChanged(AvailableSeatsChanged @event)
+        {
+            foreach (var seat in @event.Seats)
+            {
+                var newValue = seat.Quantity;
+
+                if (_remainingSeats.TryGetValue(seat.SeatType, out var quantity))
+                    newValue += quantity;
+
+                _remainingSeats[seat.SeatType] = newValue;
+            }
         }
 
         private void OnSeatsReserved(SeatsReserved @event)

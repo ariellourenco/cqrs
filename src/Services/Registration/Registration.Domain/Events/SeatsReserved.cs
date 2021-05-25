@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using MediatR;
 
-namespace CQRSJourney.Registration
+namespace CQRSJourney.Registration.Events
 {
     /// <summary>
     /// Supplies information about a reservation event that is being raised.
@@ -15,26 +15,28 @@ namespace CQRSJourney.Registration
         public Guid ReservationId { get; }
 
         /// <summary>
-        /// Gets the list of seat types and their reserved quantities.
+        /// Gets a collection containing the seat types and their reserved quantities.
         /// </summary>
+        /// <value>A collection containing the seat types and their quantities.</value>
         public IReadOnlyCollection<SeatQuantity> Details { get; }
 
         /// <summary>
-        /// Gets the list of seat types and their availability changes.
+        /// Gets a collection containing the seat types and their quantities.
         /// </summary>
+        /// <value>A collection containing the seat types and their quantities.</value>
         public IReadOnlyCollection<SeatQuantity> AvailableSeatsChanged { get; }
 
         /// <summary>
         /// Inititializes a new instance of <see cref="SeatsReserved"/> event.
         /// </summary>
         /// <param name="id">A unique identifier for the reservation request.</param>
-        /// <param name="details">A list of seat types and their reserved quantities.</param>
-        /// <param name="AvailableSeatsChanged">A list of seats types and their availability changes.</param>
-        public SeatsReserved(Guid id, List<SeatQuantity> details, List<SeatQuantity> availableSeatsChanged)
+        /// <param name="details">A collection containing the seat types and their reserved quantities.</param>
+        /// <param name="availableSeatsChanged">A collection containing the seats types and their changes.</param>
+        public SeatsReserved(Guid id, IReadOnlyCollection<SeatQuantity> details, IReadOnlyCollection<SeatQuantity> availableSeatsChanged)
         {
             ReservationId = id;
-            Details = details.AsReadOnly();
-            AvailableSeatsChanged = availableSeatsChanged.AsReadOnly();
+            Details = details;
+            AvailableSeatsChanged = availableSeatsChanged;
         }
     }
 }

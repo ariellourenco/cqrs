@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using CQRSJourney.Registration.Events;
 using Xunit;
 
 namespace CQRSJourney.Registration
@@ -12,6 +13,20 @@ namespace CQRSJourney.Registration
 
         private static readonly Guid SeatTypeId = Guid.NewGuid();
 
+        [Fact]
+        public void AddSeats_ChangesSeatsAvailability()
+        {
+            // Arrange
+            var quantity = 10;
+            var sut = new SeatsAvailability(ReservationId);
+
+            // Act
+            sut.AddSeats(SeatTypeId, quantity);
+
+            // Assert
+            Assert.Equal(SeatTypeId, ((AvailableSeatsChanged)sut.Events.Single()).Seats.ElementAt(0).SeatType);
+            Assert.Equal(quantity, ((AvailableSeatsChanged)sut.Events.Single()).Seats.ElementAt(0).Quantity);
+        }
 
         [Fact]
         public void RequestingLessSeatsThanTotal_ReservesAllRequestedSeats()
@@ -25,9 +40,9 @@ namespace CQRSJourney.Registration
             sut.MakeReservation(ReservationId, new[] { new SeatQuantity(SeatTypeId, wantedSeats) });
 
             // Assert
-            Assert.Equal(ReservationId, ((SeatsReserved)sut.Events.Single()).ReservationId);
-            Assert.Equal(SeatTypeId, ((SeatsReserved)sut.Events.Single()).Details.ElementAt(0).SeatType);
-            Assert.Equal(wantedSeats, ((SeatsReserved)sut.Events.Single()).Details.ElementAt(0).Quantity);
+            Assert.Equal(ReservationId, ((SeatsReserved)sut.Events.LastOrDefault()).ReservationId);
+            Assert.Equal(SeatTypeId, ((SeatsReserved)sut.Events.LastOrDefault()).Details.ElementAt(0).SeatType);
+            Assert.Equal(wantedSeats, ((SeatsReserved)sut.Events.LastOrDefault()).Details.ElementAt(0).Quantity);
         }
 
         [Fact]
@@ -42,9 +57,9 @@ namespace CQRSJourney.Registration
             sut.MakeReservation(ReservationId, new[] { new SeatQuantity(SeatTypeId, wantedSeats) });
 
             // Assert
-            Assert.Equal(ReservationId, ((SeatsReserved)sut.Events.Single()).ReservationId);
-            Assert.Equal(SeatTypeId, ((SeatsReserved)sut.Events.Single()).Details.ElementAt(0).SeatType);
-            Assert.Equal(AvailableSeats, ((SeatsReserved)sut.Events.Single()).Details.ElementAt(0).Quantity);
+            Assert.Equal(ReservationId, ((SeatsReserved)sut.Events.LastOrDefault()).ReservationId);
+            Assert.Equal(SeatTypeId, ((SeatsReserved)sut.Events.LastOrDefault()).Details.ElementAt(0).SeatType);
+            Assert.Equal(AvailableSeats, ((SeatsReserved)sut.Events.LastOrDefault()).Details.ElementAt(0).Quantity);
         }
 
         [Fact]
@@ -59,8 +74,8 @@ namespace CQRSJourney.Registration
             sut.MakeReservation(ReservationId, new[] { new SeatQuantity(SeatTypeId, wantedSeats) });
 
             // Assert
-            Assert.Equal(SeatTypeId, ((SeatsReserved)sut.Events.Single()).AvailableSeatsChanged.ElementAt(0).SeatType);
-            Assert.Equal((-1) * wantedSeats, ((SeatsReserved)sut.Events.Single()).AvailableSeatsChanged.ElementAt(0).Quantity);
+            Assert.Equal(SeatTypeId, ((SeatsReserved)sut.Events.LastOrDefault()).AvailableSeatsChanged.ElementAt(0).SeatType);
+            Assert.Equal((-1) * wantedSeats, ((SeatsReserved)sut.Events.LastOrDefault()).AvailableSeatsChanged.ElementAt(0).Quantity);
         }
 
         [Fact]
@@ -75,8 +90,8 @@ namespace CQRSJourney.Registration
             sut.MakeReservation(ReservationId, new[] { new SeatQuantity(SeatTypeId, wantedSeats) });
 
             // Assert
-            Assert.Equal(SeatTypeId, ((SeatsReserved)sut.Events.Single()).AvailableSeatsChanged.ElementAt(0).SeatType);
-            Assert.Equal((-1) * AvailableSeats, ((SeatsReserved)sut.Events.Single()).AvailableSeatsChanged.ElementAt(0).Quantity);
+            Assert.Equal(SeatTypeId, ((SeatsReserved)sut.Events.LastOrDefault()).AvailableSeatsChanged.ElementAt(0).SeatType);
+            Assert.Equal((-1) * AvailableSeats, ((SeatsReserved)sut.Events.LastOrDefault()).AvailableSeatsChanged.ElementAt(0).Quantity);
         }
 
         [Fact]
@@ -92,8 +107,8 @@ namespace CQRSJourney.Registration
             sut.MakeReservation(ReservationId, new[] { new SeatQuantity(SeatTypeId, 4) });
 
             // Assert
-            Assert.Equal(ReservationId, ((SeatsReserved)sut.Events.Last()).ReservationId);
-            Assert.Equal(seatsChanged, ((SeatsReserved)sut.Events.Last()).AvailableSeatsChanged.Single().Quantity);
+            Assert.Equal(ReservationId, ((SeatsReserved)sut.Events.LastOrDefault()).ReservationId);
+            Assert.Equal(seatsChanged, ((SeatsReserved)sut.Events.LastOrDefault()).AvailableSeatsChanged.Single().Quantity);
         }
 
         [Fact]
@@ -109,8 +124,8 @@ namespace CQRSJourney.Registration
             sut.MakeReservation(ReservationId, new[] { new SeatQuantity(SeatTypeId, 8) });
 
             // Assert
-            Assert.Equal(ReservationId, ((SeatsReserved)sut.Events.Last()).ReservationId);
-            Assert.Equal(seatsChanged, ((SeatsReserved)sut.Events.Last()).AvailableSeatsChanged.Single().Quantity);
+            Assert.Equal(ReservationId, ((SeatsReserved)sut.Events.LastOrDefault()).ReservationId);
+            Assert.Equal(seatsChanged, ((SeatsReserved)sut.Events.LastOrDefault()).AvailableSeatsChanged.Single().Quantity);
         }
 
         [Fact]
@@ -126,8 +141,8 @@ namespace CQRSJourney.Registration
             sut.MakeReservation(ReservationId, new[] { new SeatQuantity(SeatTypeId, 12) });
 
             // Assert
-            Assert.Equal(ReservationId, ((SeatsReserved)sut.Events.Last()).ReservationId);
-            Assert.Equal(seatsChanged, ((SeatsReserved)sut.Events.Last()).AvailableSeatsChanged.Single().Quantity);
+            Assert.Equal(ReservationId, ((SeatsReserved)sut.Events.LastOrDefault()).ReservationId);
+            Assert.Equal(seatsChanged, ((SeatsReserved)sut.Events.LastOrDefault()).AvailableSeatsChanged.Single().Quantity);
         }
 
         [Fact]
