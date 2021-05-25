@@ -14,18 +14,33 @@ namespace CQRSJourney.Registration
         private static readonly Guid SeatTypeId = Guid.NewGuid();
 
         [Fact]
-        public void AddSeats_ChangesSeatsAvailability()
+        public void AddSeats_ForNonExistingSeatType_ChangesSeatsAvailability()
+        {
+            // Arrange
+            var sut = new SeatsAvailability(ReservationId);
+
+            // Act
+            sut.AddSeats(SeatTypeId, AvailableSeats);
+
+            // Assert
+            Assert.Equal(SeatTypeId, ((AvailableSeatsChanged)sut.Events.Single()).Seats.ElementAt(0).SeatType);
+            Assert.Equal(AvailableSeats, ((AvailableSeatsChanged)sut.Events.Single()).Seats.ElementAt(0).Quantity);
+        }
+
+        [Fact]
+        public void AddSeats_ForExistingSeatType_IncreaseSeatsAvailability()
         {
             // Arrange
             var quantity = 10;
             var sut = new SeatsAvailability(ReservationId);
 
             // Act
+            sut.AddSeats(SeatTypeId, AvailableSeats);
             sut.AddSeats(SeatTypeId, quantity);
 
             // Assert
-            Assert.Equal(SeatTypeId, ((AvailableSeatsChanged)sut.Events.Single()).Seats.ElementAt(0).SeatType);
-            Assert.Equal(quantity, ((AvailableSeatsChanged)sut.Events.Single()).Seats.ElementAt(0).Quantity);
+            Assert.Equal(SeatTypeId, ((AvailableSeatsChanged)sut.Events.LastOrDefault()).Seats.ElementAt(0).SeatType);
+            Assert.Equal(quantity, ((AvailableSeatsChanged)sut.Events.LastOrDefault()).Seats.ElementAt(0).Quantity);
         }
 
         [Fact]

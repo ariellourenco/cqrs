@@ -33,7 +33,7 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
-        public void  Equals_ComparesAllPropertiesAndFieldsForPropertyDifferent_ReturnsFalse()
+        public void  Equals_ComparesAllPropertiesAndFieldsForDifferentProperty_ReturnsFalse()
         {
             // Arrange
             var value1 = new TestValue { Property1 = "test", Property2 = 10, Field = 3 };
@@ -47,7 +47,7 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
-        public void  Equals_ComparesAllPropertiesAndFieldsForFieldsDifferent_ReturnsFalse()
+        public void  Equals_ComparesAllPropertiesAndFieldsForDifferentFields_ReturnsFalse()
         {
             // Arrange
             var value1 = new TestValue { Property1 = "test", Property2 = 10, Field = 3 };
@@ -173,7 +173,23 @@ namespace CQRSJourney.Registration
 
         private class TestValue : ValueObject
         {
-            public TestValue(){}
+            private int privateField;
+
+            protected int protectedField;
+
+            public int Field;
+
+            private int PrivateProperty { get; set; }
+
+            protected int ProtectedProperty { get; set; }
+
+            public string Property1 { get; set; }
+
+            public int Property2 { get; set; }
+
+            public TestValue()
+            {
+            }
 
             public TestValue(int nonPublicValue)
             {
@@ -182,20 +198,6 @@ namespace CQRSJourney.Registration
                 privateField = nonPublicValue;
                 protectedField = nonPublicValue;
             }
-
-            public string Property1 { get; set; }
-
-            public int Property2 { get; set; }
-
-            public int Field;
-
-            protected int protectedField;
-
-            private int privateField;
-
-            protected int ProtectedProperty { get; set; }
-
-            private int PrivateProperty { get; set; }
         }
     }
 }
