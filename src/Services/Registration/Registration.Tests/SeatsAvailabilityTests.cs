@@ -44,6 +44,71 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
+        public void RemoveSeats_ForExistingSeatType_ChangesSeatsAvailability()
+        {
+            // Arrange
+            var quantity = 5;
+            var sut = new SeatsAvailability(ReservationId);
+
+            // Act
+            sut.AddSeats(SeatTypeId, AvailableSeats);
+            sut.RemoveSeats(SeatTypeId, quantity);
+
+            // Assert
+            Assert.Equal(SeatTypeId, ((AvailableSeatsChanged)sut.Events.LastOrDefault()).Seats.ElementAt(0).SeatType);
+            Assert.Equal(-quantity, ((AvailableSeatsChanged)sut.Events.LastOrDefault()).Seats.ElementAt(0).Quantity);
+        }
+
+        [Fact]
+        public void RemoveSeats_ForNonExistingSeatType_DoNothing()
+        {
+            // Arrange
+            var unknownSeatType = Guid.NewGuid();
+            var sut = new SeatsAvailability(ReservationId);
+
+            // Act
+            sut.AddSeats(SeatTypeId, AvailableSeats);
+            sut.RemoveSeats(unknownSeatType, 5);
+
+            // Assert
+            Assert.DoesNotContain(sut.Events,
+                @event => (@event is AvailableSeatsChanged e && e.Seats.ElementAt(0).SeatType == unknownSeatType));
+        }
+
+        [Fact]
+        public void CancelReservationChangesSeatsAvailability()
+        {
+            // Arrange
+            var wantedSeats = 5;
+            var sut = new SeatsAvailability(ReservationId);
+
+            // Act
+            sut.AddSeats(SeatTypeId, AvailableSeats);
+            sut.MakeReservation(ReservationId, new[] { new SeatQuantity(SeatTypeId, wantedSeats) });
+            sut.CancelReservation(ReservationId);
+
+            // Assert
+            Assert.Equal(ReservationId, ((SeatsReservationCancelled)sut.Events.LastOrDefault()).ReservationId);
+            Assert.Equal(SeatTypeId, ((SeatsReservationCancelled)sut.Events.LastOrDefault()).AvailableSeatsChanged.ElementAt(0).SeatType);
+            Assert.Equal(wantedSeats, ((SeatsReservationCancelled)sut.Events.LastOrDefault()).AvailableSeatsChanged.ElementAt(0).Quantity);
+        }
+
+        [Fact]
+        public void CancelReservation_ForNonExistingReservation_DoNothing()
+        {
+            // Arrange
+            var sut = new SeatsAvailability(ReservationId);
+
+            // Act
+            sut.AddSeats(SeatTypeId, AvailableSeats);
+            sut.MakeReservation(ReservationId, new[] { new SeatQuantity(SeatTypeId, 4) });
+            sut.CancelReservation(Guid.NewGuid());
+
+            // Assert
+            Assert.DoesNotContain(sut.Events, e => (e is SeatsReservationCancelled));
+        }
+
+        [Fact]
         public void CanCommitReservation()
         {
             // Arrange

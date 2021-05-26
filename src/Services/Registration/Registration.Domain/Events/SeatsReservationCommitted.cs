@@ -17,10 +17,10 @@ namespace CQRSJourney.Registration.Events
         /// <summary>
         /// Inititializes a new instance of <see cref="SeatsReservationCommitted"/> event.
         /// </summary>
-        /// <param name="reservationId">A unique identifier for the reservation request.</param>
-        public SeatsReservationCommitted(Guid reservationId)
+        /// <param name="id">A unique identifier for the reservation request.</param>
+        public SeatsReservationCommitted(Guid id)
         {
-            ReservationId = reservationId;
+            ReservationId = id;
         }
     }
 }

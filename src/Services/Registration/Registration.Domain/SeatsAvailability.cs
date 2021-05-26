@@ -25,6 +25,7 @@ namespace CQRSJourney.Registration
         public SeatsAvailability(Guid id) : base(id)
         {
             base.Handles<AvailableSeatsChanged>(OnSeatsChanged);
+            base.Handles<SeatsReservationCancelled>(OnReservationCancelled);
             base.Handles<SeatsReservationCommitted>(OnReservationCommitted);
             base.Handles<SeatsReserved>(OnSeatsReserved);
         }
@@ -34,9 +35,21 @@ namespace CQRSJourney.Registration
         /// </summary>
         /// <param name="seatType">The type of seat to add.</param>
         /// <param name="quantity">The number of seats to add.</param>
-        public void AddSeats(Guid seatType, int quantity)
-        {
+        public void AddSeats(Guid seatType, int quantity) =>
             AddEvent(new AvailableSeatsChanged(new[] { new SeatQuantity(seatType, quantity) }));
+
+        /// <summary>
+        /// Cancels the reservation operation. If there is no pending reservation, no action is taken.
+        /// </summary>
+        /// <param name="reservationId">A unique identifier for the reservation request.</param>
+        public void CancelReservation(Guid reservationId)
+        {
+            if (_pendingReservations.TryGetValue(reservationId, out var reservation))
+            {
+                AddEvent(new SeatsReservationCancelled(
+                    id: reservationId,
+                    availableSeatsChanged: reservation.Select(x => new SeatQuantity(x.SeatType, x.Quantity)).ToList()));
+            }
         }
 
         /// <summary>
@@ -84,6 +97,25 @@ namespace CQRSJourney.Registration
                 id: reservationId,
                 details: reservation.Select(x => new SeatQuantity(x.Key, x.Value.Actual)).Where(x =>x.Quantity != 0).ToList(),
                 availableSeatsChanged: reservation.Select(x => new SeatQuantity(x.Key, -x.Value.Difference)).Where(x => x.Quantity != 0).ToList()));
+        }
+
+        /// <summary>
+        /// Decreases the number of seats available.
+        /// </summary>
+        /// <param name="seatType">The type of seat to remove.</param>
+        /// <param name="quantity">The number of seats to remove.</param>
+        public void RemoveSeats(Guid seatType, int quantity)
+        {
+            if (_remainingSeats.ContainsKey(seatType))
+                AddEvent(new AvailableSeatsChanged(new[] { new SeatQuantity(seatType, -quantity) }));
+        }
+
+        private void OnReservationCancelled(SeatsReservationCancelled @event)
+        {
+            _pendingReservations.Remove(@event.ReservationId);
+
+            foreach (var seat in @event.AvailableSeatsChanged)
+                _remainingSeats[seat.SeatType] += seat.Quantity;
         }
 
         private void OnReservationCommitted(SeatsReservationCommitted @event) =>

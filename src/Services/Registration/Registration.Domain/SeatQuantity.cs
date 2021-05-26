@@ -10,11 +10,13 @@ namespace CQRSJourney.Registration
         /// <summary>
         /// Gets the quantity of seats.
         /// </summary>
+        /// <value>A number that represents the seat quantity.</value>
         public int Quantity { get; private set; }
 
         /// <summary>
         /// Gets the type of the seat.
         /// </summary>
+        /// <value>A unique identifier of the type of the seat.</value>
         public Guid SeatType { get; private set; }
 
         /// <summary>
