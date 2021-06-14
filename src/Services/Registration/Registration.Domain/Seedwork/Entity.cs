@@ -33,19 +33,19 @@ namespace CQRSJourney.Registration
     {
         private int? _requestedHashCode;
 
-        private List<INotification> _events;
+        private List<INotification> _events = new List<INotification>();
 
         private readonly Dictionary<Type, Action<INotification>> _handlers = new Dictionary<Type, Action<INotification>>();
 
         /// <summary>
         /// A unique identifier for this <see cref="Entity{TKey}"/> instance.
         /// </summary>
-        public TKey Id { get; protected set; }
+        public TKey? Id { get; protected set; }
 
         /// <summary>
         /// Gets a list of domain events that can be subscribed to.
         /// </summary>
-        public IReadOnlyCollection<INotification> Events => _events?.AsReadOnly();
+        public IReadOnlyCollection<INotification> Events => _events.AsReadOnly();
 
         /// <summary>
         /// Adds the specified domain event to the events list.
@@ -58,7 +58,6 @@ namespace CQRSJourney.Registration
         /// <param name="event">The domain event to add.</param>
         public void AddEvent(INotification @event)
         {
-            _events = _events ?? new List<INotification>();
             _events.Add(@event);
 
             // If we have a handler registered for the event then invoke it.
@@ -69,10 +68,7 @@ namespace CQRSJourney.Registration
         /// <summary>
         /// Removes all domain events from the events list.
         /// </summary>
-        public void ClearEvents()
-        {
-            _events?.Clear();
-        }
+        public void ClearEvents() => _events.Clear();
 
         /// <summary>
         /// Registers a handler that will be invoked when the specified domain event is fired.
@@ -86,29 +82,43 @@ namespace CQRSJourney.Registration
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            // Check for null and compare run-time types.
+            // Check for null and compare whether the runtime types are not
+            // exactly the same.
             if ((obj == null) || !this.GetType().Equals(obj.GetType()))
                 return false;
 
-            return ((Entity<TKey>)obj).Id.Equals(this.Id);
+            // Optimization for a common success case.
+            if (object.ReferenceEquals(this, obj))
+                return true;
+
+            return ((Entity<TKey>)obj).Id?.Equals(this.Id) ?? false;
         }
 
         /// <inheritdoc />
         public override int GetHashCode()
         {
+            int hashCodeMultiplier = 397;
+
             unchecked
             {
                 // We want to compare entity instances by its identity.
                 // XOR for random distribution (https://ericlippert.com/2011/02/28/guidelines-and-rules-for-gethashcode/)
                 if (!_requestedHashCode.HasValue)
-                    _requestedHashCode = (Id.GetHashCode() * 397) ^ 31;
+                    _requestedHashCode = ((Id?.GetHashCode() ?? 0) * hashCodeMultiplier) ^ 31;
 
                 return _requestedHashCode.Value;
             }
         }
 
+        /// <summary>
+        /// Compares two <see cref="Entity"/> values for equality.
+        /// See the type documentation for a description of equality semantics.
+        /// </summary>
+        /// <param name="left">The first value to compare</param>
+        /// <param name="right">The second value to compare</param>
+        /// <returns><see langword="true"/> if the two <see cref="Entity"/> values are the same; <see langword="false"/> otherwise.</returns>
         public static bool operator ==(Entity<TKey> left, Entity<TKey> right)
         {
             if (object.Equals(left, null))
@@ -117,9 +127,13 @@ namespace CQRSJourney.Registration
             return left.Equals(right);
         }
 
-        public static bool operator !=(Entity<TKey> left, Entity<TKey> right)
-        {
-            return !(left == right);
-        }
+        /// <summary>
+        /// Compares two <see cref="Entity"/> values for inequality.
+        /// See the type documentation for a description of equality semantics.
+        /// </summary>
+        /// <param name="left">The first value to compare</param>
+        /// <param name="right">The second value to compare</param>
+        /// <returns><see langword="false"/> if the two <see cref="Entity"/> values are the same; <see langword="true"/> otherwise.</returns>
+        public static bool operator !=(Entity<TKey> left, Entity<TKey> right) => !(left == right);
     }
 }

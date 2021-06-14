@@ -17,11 +17,11 @@ namespace CQRSJourney.Registration
         /// </summary>
         /// <param name ="other">The <see cref="ValueObject"/> to compare with the current one.</param>
         /// <returns><see langword="true"/> if the specified <see cref="ValueObject"/> is equal to the current one; otherwise, <see langword="false"/>.</returns>
-        public bool Equals(ValueObject other) =>
+        public bool Equals(ValueObject? other) =>
             Equals(other as object);
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             // Check for null and compare run-time types.
             if (obj == null || !this.GetType().Equals(obj.GetType()))
@@ -53,7 +53,7 @@ namespace CQRSJourney.Registration
                         var name = field.Name;
                         var value = field.GetValue(this);
 
-                        hash += name.GetHashCode() ^ value.GetHashCode();
+                        hash += name.GetHashCode() ^ value?.GetHashCode() ?? 0;
                     }
 
                     foreach (var property in properties)
@@ -61,7 +61,7 @@ namespace CQRSJourney.Registration
                         var name = property.Name;
                         var value = property.GetValue(this, null);
 
-                        hash += name.GetHashCode() ^ value.GetHashCode();
+                        hash += name.GetHashCode() ^ value?.GetHashCode() ?? 0;
                     }
                 }
             }

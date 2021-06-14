@@ -10,7 +10,7 @@ namespace CQRSJourney.Registration
         public void CanAddEvents()
         {
             // Arrange
-            var entity = new SampleEntity();
+            var entity = new SampleEntity(Guid.NewGuid());
             var @event = new Ping();
 
             // Act
@@ -22,20 +22,7 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
-        public void ClearEvents_DoesNothing_IfNoEventsAreAdded()
-        {
-            // Arrange
-            var entity = new SampleEntity();
-
-            // Act
-            entity.ClearEvents();
-
-            // Assert
-            Assert.Null(entity.Events);
-        }
-
-        [Fact]
-        public void ClearEvents_RemovesAllEventsAdded()
+        public void CanRemovesAllAddedEvents()
         {
             // Arrange
             var entity = new SampleEntity();
@@ -50,88 +37,7 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
-        public void Equals_ComparesSameIdentity_ReturnsTrue()
-        {
-            // Arrange
-            var id = Guid.NewGuid();
-
-            var entityLeft = new SampleEntity(id);
-            var entityRight = new SampleEntity(id);
-
-            // Act & Assert
-            Assert.True(entityLeft.Equals(entityRight));
-            Assert.True(entityRight.Equals(entityLeft));
-            Assert.True(entityLeft == entityRight);
-            Assert.True(entityRight == entityLeft);
-        }
-
-        [Fact]
-        public void Equals_ComparesSameReference_ReturnsTrue()
-        {
-            // Arrange
-            var entityLeft = new SampleEntity();
-            var entityRight = entityLeft;
-
-            // Act & Assert
-            Assert.True(entityLeft.Equals(entityRight));
-            Assert.True(entityRight.Equals(entityLeft));
-            Assert.True(entityLeft == entityRight);
-            Assert.True(entityRight == entityLeft);
-        }
-
-        [Fact]
-        public void Equals_ComparesDifferentIdentity_ReturnsFalse()
-        {
-            // Arrange
-            var entityLeft = new SampleEntity();
-            var entityRight = new SampleEntity();
-
-            // Act & Assert
-            Assert.False(entityLeft.Equals(entityRight));
-            Assert.False(entityRight.Equals(entityLeft));
-            Assert.False(entityLeft == entityRight);
-            Assert.False(entityRight == entityLeft);
-        }
-
-        [Fact]
-        public void Equals_ComparesDifferentRuntimeType_ReturnsFalse()
-        {
-            // Arrange
-            var entityLeft = new SampleEntity();
-            var entityRight = new {};
-
-            // Act & Assert
-            Assert.False(entityLeft.Equals(entityRight));
-            Assert.False(entityRight.Equals(entityLeft));
-        }
-
-        [Fact]
-        public void Equals_ComparesNullReference_ReturnsFalse()
-        {
-            // Arrange
-            var entityLeft = new SampleEntity();
-            var entityRight = (SampleEntity)null;
-
-            // Act & Assert
-            Assert.False(entityLeft.Equals(entityRight));
-            Assert.False(entityLeft == entityRight);
-            Assert.False(entityRight == entityLeft);
-        }
-
-        [Fact]
-        public void Equals_ComparesWhenBothOperandsAreNull_ReturnsTrue()
-        {
-            // Arrange
-            var entityLeft = (SampleEntity)null;
-            var entityRight = (SampleEntity)null;
-
-            // Act & Assert
-            Assert.True(entityLeft == entityRight);
-            Assert.True(entityRight == entityLeft);
-        }
-
-        [Fact]
-        public void DifferentOperator_ComparesSameIdentity_ReturnsFalse()
+        public void ComparesSameIdentity_ReturnsTrue()
         {
             // Arrange
             var id = Guid.NewGuid();
@@ -142,22 +48,109 @@ namespace CQRSJourney.Registration
             // Act & Assert
             Assert.False(entityLeft != entityRight);
             Assert.False(entityRight != entityLeft);
+            Assert.True(entityLeft == entityRight);
+            Assert.True(entityRight == entityLeft);
+            Assert.True(entityLeft.Equals(entityRight));
+            Assert.True(entityRight.Equals(entityLeft));
         }
 
         [Fact]
-        public void DifferentOperator_ComparesDifferentIdentity_ReturnsTrue()
+        public void ComparesSameReference_ReturnsTrue()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+
+            var entityLeft = new SampleEntity(id);
+            var entityRight = entityLeft;
+
+            // Act & Assert
+            Assert.False(entityLeft != entityRight);
+            Assert.False(entityRight != entityLeft);
+            Assert.True(entityLeft == entityRight);
+            Assert.True(entityRight == entityLeft);
+            Assert.True(entityLeft.Equals(entityRight));
+            Assert.True(entityRight.Equals(entityLeft));
+        }
+
+        [Fact]
+        public void ComparesDifferentIdentity_ReturnsFalse()
+        {
+            // Arrange
+            var entityLeft = new SampleEntity(Guid.NewGuid());
+            var entityRight = new SampleEntity(Guid.NewGuid());
+
+            // Act & Assert
+            Assert.False(entityLeft.Equals(entityRight));
+            Assert.False(entityRight.Equals(entityLeft));
+            Assert.False(entityLeft == entityRight);
+            Assert.False(entityRight == entityLeft);
+            Assert.True(entityLeft != entityRight);
+            Assert.True(entityRight != entityLeft);
+        }
+
+        [Fact]
+        public void ComparesDifferentRuntimeType_ReturnsFalse()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+
+            var entityLeft = new SampleEntity(id);
+            var entityRight = new {};
+
+            // Act & Assert
+            Assert.False(entityLeft.Equals(entityRight));
+            Assert.False(entityRight.Equals(entityLeft));
+        }
+
+        [Fact]
+        public void ComparesTransientIdentity_ReturnsFalse()
         {
             // Arrange
             var entityLeft = new SampleEntity();
             var entityRight = new SampleEntity();
 
             // Act & Assert
+            Assert.False(entityLeft.Equals(entityRight));
+            Assert.False(entityRight.Equals(entityLeft));
+            Assert.False(entityLeft == entityRight);
+            Assert.False(entityRight == entityLeft);
             Assert.True(entityLeft != entityRight);
             Assert.True(entityRight != entityLeft);
         }
 
         [Fact]
-        public void GetHashCode_ForEqualIdentity_ReturnsSameHashCode()
+        public void ComparesNullReference_ReturnsFalse()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+
+            var entityLeft = new SampleEntity(id);
+            var entityRight = (SampleEntity)null;
+
+            // Act & Assert
+            Assert.False(entityLeft.Equals(entityRight));
+            Assert.False(entityLeft == entityRight);
+            Assert.False(entityRight == entityLeft);
+            Assert.True(entityLeft != entityRight);
+            Assert.True(entityRight != entityLeft);
+        }
+
+        [Fact]
+        public void ComparesNullOperands_ReturnsTrue()
+        {
+            // Arrange
+            var entityLeft = (SampleEntity)null;
+            var entityRight = (SampleEntity)null;
+
+            // Act & Assert
+            Assert.False(entityLeft != entityRight);
+            Assert.False(entityRight != entityLeft);
+            Assert.True(entityLeft == entityRight);
+            Assert.True(entityRight == entityLeft);
+        }
+
+        [Fact]
+        public void EqualIdentity_ReturnsSameHashCode()
         {
             // Arrange
             var id = Guid.NewGuid();
@@ -170,21 +163,32 @@ namespace CQRSJourney.Registration
         }
 
         [Fact]
-        public void GetHashCode_ForDifferentIdentity_ReturnsDifferentHashCode()
+        public void DifferentIdentity_ReturnsDifferentHashCode()
         {
             // Arrange
-            var entity1 = new SampleEntity();
-            var entity2 = new SampleEntity();
+            var entity1 = new SampleEntity(Guid.NewGuid());
+            var entity2 = new SampleEntity(Guid.NewGuid());
 
             // Act & Assert
             Assert.NotEqual(entity1.GetHashCode(), entity2.GetHashCode());
         }
 
-        private class SampleEntity : Entity
+        [Fact]
+        public void TransientIdentity_ReturnsPredictableHashCode()
+        {
+            // Arrange
+            var entity = new SampleEntity();
+            var hashCode = 31;
+
+            // Act & Assert
+            Assert.Equal(hashCode, entity.GetHashCode());
+        }
+
+        private class SampleEntity : Entity<string>
         {
             public SampleEntity() { }
 
-            public SampleEntity(Guid id) => Id = id;
+            public SampleEntity(Guid id) => Id = id.ToString();
         }
 
         private class Ping : INotification

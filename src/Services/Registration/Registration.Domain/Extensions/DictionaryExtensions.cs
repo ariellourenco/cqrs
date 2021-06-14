@@ -18,15 +18,13 @@ namespace CQRSJourney.Registration.Extensions
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is a null reference.</exception>
         /// <exception cref="OverflowException">The dictionary contains too many elements.</exception>
-        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
+        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey key)
             where TValue : new()
             {
-                TValue value;
-
-                if (!dictionary.TryGetValue(key, out value))
+                if (!source.TryGetValue(key, out var value))
                 {
                     value = new TValue();
-                    dictionary[key] = value;
+                    source[key] = value;
                 }
 
                 return value;
