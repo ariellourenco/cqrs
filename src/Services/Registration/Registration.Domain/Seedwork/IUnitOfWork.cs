@@ -19,6 +19,6 @@ namespace CQRSJourney.Registration
         /// A <see cref="Task{int}"/> that represents the asynchronous save operation, containing the the number of state entries written
         /// to the underlying database. This can include state entries for entities and/or relationships.
         /// </returns>
-        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

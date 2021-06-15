@@ -33,9 +33,9 @@ namespace CQRSJourney.Registration
     {
         private int? _requestedHashCode;
 
-        private List<INotification> _events = new List<INotification>();
+        private readonly List<INotification> _events = new();
 
-        private readonly Dictionary<Type, Action<INotification>> _handlers = new Dictionary<Type, Action<INotification>>();
+        private readonly Dictionary<Type, Action<INotification>> _handlers = new();
 
         /// <summary>
         /// A unique identifier for this <see cref="Entity{TKey}"/> instance.
@@ -86,14 +86,14 @@ namespace CQRSJourney.Registration
         {
             // Check for null and compare whether the runtime types are not
             // exactly the same.
-            if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+            if ((obj == null) || !GetType().Equals(obj.GetType()))
                 return false;
 
             // Optimization for a common success case.
             if (object.ReferenceEquals(this, obj))
                 return true;
 
-            return ((Entity<TKey>)obj).Id?.Equals(this.Id) ?? false;
+            return ((Entity<TKey>)obj).Id?.Equals(Id) ?? false;
         }
 
         /// <inheritdoc />
@@ -122,7 +122,7 @@ namespace CQRSJourney.Registration
         public static bool operator ==(Entity<TKey> left, Entity<TKey> right)
         {
             if (object.Equals(left, null))
-                return object.Equals(right, null) ? true : false;
+                return object.Equals(right, null);
 
             return left.Equals(right);
         }

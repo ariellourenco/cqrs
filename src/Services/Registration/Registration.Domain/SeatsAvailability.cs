@@ -14,9 +14,9 @@ namespace CQRSJourney.Registration
         // Using a private collection field for better encapsulation so new reservations can
         // not be added from "outside" of SeatsAvailability aggregate directly to the collection,
         // but only through the method SeatsAvailability.MakeReservation() which includes behaviour.
-        private IDictionary<Guid, List<SeatQuantity>> _pendingReservations = new Dictionary<Guid, List<SeatQuantity>>();
+        private readonly IDictionary<Guid, List<SeatQuantity>> _pendingReservations = new Dictionary<Guid, List<SeatQuantity>>();
 
-        private IDictionary<Guid, int> _remainingSeats = new Dictionary<Guid, int>();
+        private readonly IDictionary<Guid, int> _remainingSeats = new Dictionary<Guid, int>();
 
         /// <summary>
         /// Inititializes a new instance of <see cref="SeatsAvailability"/> class.
