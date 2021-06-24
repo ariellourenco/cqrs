@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using MediatR;
 
 namespace CQRSJourney.Registration.Events

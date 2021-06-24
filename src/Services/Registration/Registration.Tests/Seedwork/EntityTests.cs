@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using MediatR;
 using Xunit;
 
@@ -95,7 +95,7 @@ namespace CQRSJourney.Registration
             var id = Guid.NewGuid();
 
             var entityLeft = new SampleEntity(id);
-            var entityRight = new {};
+            var entityRight = new { };
 
             // Act & Assert
             Assert.False(entityLeft.Equals(entityRight));

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace CQRSJourney.Registration.Extensions
@@ -20,14 +20,14 @@ namespace CQRSJourney.Registration.Extensions
         /// <exception cref="OverflowException">The dictionary contains too many elements.</exception>
         public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> source, TKey key)
             where TValue : new()
+        {
+            if (!source.TryGetValue(key, out var value))
             {
-                if (!source.TryGetValue(key, out var value))
-                {
-                    value = new TValue();
-                    source[key] = value;
-                }
-
-                return value;
+                value = new TValue();
+                source[key] = value;
             }
+
+            return value;
+        }
     }
 }

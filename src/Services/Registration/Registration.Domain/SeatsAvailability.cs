@@ -95,7 +95,7 @@ namespace CQRSJourney.Registration
             // when comitting changes into the Database.
             AddEvent(new SeatsReserved(
                 id: reservationId,
-                details: reservation.Select(x => new SeatQuantity(x.Key, x.Value.Actual)).Where(x =>x.Quantity != 0).ToList(),
+                details: reservation.Select(x => new SeatQuantity(x.Key, x.Value.Actual)).Where(x => x.Quantity != 0).ToList(),
                 availableSeatsChanged: reservation.Select(x => new SeatQuantity(x.Key, -x.Value.Difference)).Where(x => x.Quantity != 0).ToList()));
         }
 
