@@ -1,6 +1,7 @@
 # Version: 1.0.0 (Using https://semver.org/)
-# Updated: 31-03-2021
+# Updated: 24-06-2021
 # See http://EditorConfig.org for more information about .editorconfig files.
+# See https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/code-style-rule-options for code style rule options.
 
 root = true
 
