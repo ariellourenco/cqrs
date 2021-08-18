@@ -43,7 +43,10 @@ jobs:
     - name: Build
       run: dotnet build --configuration ${{ env.BUILD_CONFIG }} --no-restore /p:SourceRevisionId=${{ github.sha }}
 
-    # Run tests (unit, integration and fuctional tests) 
+    # Run tests (unit, integration and fuctional tests)
+    # Enforce a minimum coverage percent on all changes to the project.
+    # In case the results falls below 80% the build will automatically fail.
+    # 📚 https://github.com/coverlet-coverage/coverlet/blob/master/Documentation/MSBuildIntegration.md
     - name: Test
       run: >-
         dotnet test --configuration ${{ env.BUILD_CONFIG }} --no-build --verbosity normal 
@@ -51,6 +54,9 @@ jobs:
         /p:CoverletOutputFormat=opencover
         /p:CoverletOutput=${{ github.workspace }}/report/
         /p:MergeWith=${{ github.workspace }}/report/coverage.json
+        /p:Threshold=80 
+        /p:ThresholdType=line 
+        /p:ThresholdStat=total
 
     # Upload coverage report to Codecov.
     - name: Upload Coverage
