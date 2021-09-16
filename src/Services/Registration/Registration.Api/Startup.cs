@@ -54,8 +54,9 @@ namespace CQRSJourney.Registration.Api
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Registration.Api v1"));
 
                 // Configure the error handler to show an error page.
-                // To display an HTML-formatted response instead, set the Accept HTTP request header
-                // to the text/html media type.
+                // Since IdentityModel version 5.2.1 (or since Microsoft.AspNetCore.Authentication.JwtBearer version 2.2.0),​
+                // PII hiding in log files is enabled by default for GDPR concerns.​
+                // For debugging/development purposes, one can enable additional detail in exceptions by setting IdentityModelEventSource.ShowPII to true.
                 app.UseDeveloperExceptionPage();
                 // app.UseMigrationsEndPoint();
             }
