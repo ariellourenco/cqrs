@@ -1,4 +1,4 @@
-﻿namespace CQRSJourney.Registration
+namespace CQRSJourney.Registration
 {
     /// <summary>
     /// Interface implemented by objects that can provide access to the underlying entity that implements <see cref="IAggregateRoot"/>.
