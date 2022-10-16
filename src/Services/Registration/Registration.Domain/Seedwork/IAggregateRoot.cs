@@ -1,4 +1,4 @@
-﻿namespace CQRSJourney.Registration
+namespace CQRSJourney.Registration
 {
     /// <summary>
     /// This is an empty interface, sometimes called a marker interface, that has no methods or constants inside it.
