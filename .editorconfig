@@ -9,7 +9,8 @@ root = true
 [*]
 charset = utf-8
 indent_style = space
-insert_final_newline = false
+insert_final_newline = true
+max_line_length = 120
 trim_trailing_whitespace = true
 
 [*.cs]
@@ -173,7 +174,6 @@ csharp_style_conditional_delegate_call = true:suggestion
 # Other features
 csharp_style_prefer_index_operator = false:none
 csharp_style_prefer_range_operator = false:none
-csharp_style_pattern_local_over_anonymous_function = false:none
 
 # TODO: Move those rules to its own global AnalyzerConfig files.
 # https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/configuration-files
@@ -236,7 +236,6 @@ indent_size = 2
 
 # Markdown
 [*.md]
-max_line_length = off
 trim_trailing_whitespace = false
 
 # Scripts
