@@ -19,7 +19,7 @@ namespace CQRSJourney.Registration
         /// <summary>
         /// Initializes a new instance of <see cref="Entity"/>.
         /// </summary>
-        /// <param name="id">A unique identifier for this <see cref="Entity"/> instance.
+        /// <param name="id">A unique identifier for this <see cref="Entity"/> instance.</param>
         public Entity(Guid id) => Id = id;
     }
 

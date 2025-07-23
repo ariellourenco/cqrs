@@ -68,7 +68,7 @@ csharp_style_prefer_top_level_statements = true
 
 # Sort using and Import directives with System.* appearing first
 dotnet_sort_system_directives_first = true
-csharp_using_directive_placement = inside_namespace:none
+csharp_using_directive_placement = outside_namespace:none
 
 # Avoid this. unless absolutely necessary
 dotnet_style_qualification_for_field = false:suggestion
@@ -215,6 +215,13 @@ dotnet_diagnostic.IDE0005.severity = warning    # IDE0005: Using directive is un
 dotnet_diagnostic.IDE0020.severity = warning    # IDE0020: Use pattern matching to avoid is check followed by a cast (with variable)
 dotnet_diagnostic.IDE0035.severity = warning    # IDE0035: Remove unreachable code
 dotnet_diagnostic.IDE0043.severity = warning    # IDE0043: Format string contains invalid placeholder
+
+# Make sure any documentation comments which are included in code get checked for syntax during the build, but do
+# not report warnings for missing comments on non product projects.
+[{**/*.Tests/*.cs,**/*.Tests/**/*.cs,}]
+dotnet_diagnostic.CS1573.severity = none # CS1573: Parameter 'parameter' has no matching param tag in the XML comment for 'parameter' (but other parameters do)
+dotnet_diagnostic.CS1591.severity = none # CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member'
+dotnet_diagnostic.CS1712.severity = none # CS1712: Type parameter 'type_parameter' has no matching typeparam tag in the XML comment on 'type_or_member' (but other type parameters do)
 
 # Xml config files
 [*.{csproj,nuspec,props,resx,ruleset,targets,stylecop,xml}]

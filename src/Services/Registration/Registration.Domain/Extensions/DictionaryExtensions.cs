@@ -1,3 +1,5 @@
+using System.Collections;
+
 namespace CQRSJourney.Registration.Extensions
 {
     /// <summary>
@@ -8,6 +10,7 @@ namespace CQRSJourney.Registration.Extensions
         /// <summary>
         /// Adds a key/value pair to the <see cref="Dictionary{TKey,TValue}"/> if the key does not already exist.
         /// </summary>
+        /// <param name="source">The dictionary to add the key/value pair to.</param>
         /// <param name="key">The key of the element to add.</param>
         /// <returns>
         /// The value for the key. This will be either the existing value for the key if the key is already in the dictionary,
