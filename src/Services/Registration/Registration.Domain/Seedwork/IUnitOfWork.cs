@@ -1,7 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace CQRSJourney.Registration
 {
     /// <summary>
@@ -19,6 +15,6 @@ namespace CQRSJourney.Registration
         /// A <see cref="Task{int}"/> that represents the asynchronous save operation, containing the the number of state entries written
         /// to the underlying database. This can include state entries for entities and/or relationships.
         /// </returns>
-        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

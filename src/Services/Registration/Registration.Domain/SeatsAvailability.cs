@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using CQRSJourney.Registration.Events;
 using CQRSJourney.Registration.Extensions;
 

@@ -9,6 +9,6 @@ namespace CQRSJourney.Registration
         /// <summary>
         /// Gets the <see cref="IUnitOfWork"/> associated with the underlying repository.
         /// </summary>
-        IUnitOfWork UnitOfWork { get; }
+        public IUnitOfWork UnitOfWork { get; }
     }
 }

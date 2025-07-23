@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-
 namespace CQRSJourney.Registration.Api
 {
     public sealed class Program
