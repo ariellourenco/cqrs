@@ -124,7 +124,7 @@ namespace CQRSJourney.Registration
             var id = Guid.NewGuid();
 
             var entityLeft = new SampleEntity(id);
-            var entityRight = (SampleEntity)null;
+            var entityRight = (SampleEntity)null!;
 
             // Act & Assert
             Assert.False(entityLeft.Equals(entityRight));
@@ -138,8 +138,8 @@ namespace CQRSJourney.Registration
         public void ComparesNullOperands_ReturnsTrue()
         {
             // Arrange
-            var entityLeft = (SampleEntity)null;
-            var entityRight = (SampleEntity)null;
+            var entityLeft = (SampleEntity)null!;
+            var entityRight = (SampleEntity)null!;
 
             // Act & Assert
             Assert.False(entityLeft != entityRight);
@@ -192,7 +192,6 @@ namespace CQRSJourney.Registration
 
         private class Ping : INotification
         {
-            public required string Message { get; set; }
         }
     }
 }
