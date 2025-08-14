@@ -1,12 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <Nullable>enable</Nullable>
-    <TargetFramework>net5.0</TargetFramework>
-  </PropertyGroup>
-
   <ItemGroup>
-      <PackageReference Include="MediatR" Version="11.0.0" />
+    <PackageReference Include="MediatR" />
   </ItemGroup>
+
 </Project>

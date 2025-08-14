@@ -1,0 +1,19 @@
+<Project>
+  <PropertyGroup>
+    <Authors>Ariel Polino Lourenco</Authors>
+    <Copyright>Copyright © $([System.DateTime]::Now.Year)</Copyright>
+    <Description>Modern implementation of the CQRS Journey project from Microsoft with enhanced code patterns, EF Core, and ASP.NET Core.</Description>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/ariellourenco/cqrs</RepositoryUrl>
+
+    <AnalysisMode>Recommended</AnalysisMode>
+    <TargetFramework>net9.0</TargetFramework>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>preview</LangVersion>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>

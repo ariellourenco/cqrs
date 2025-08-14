@@ -1,0 +1,21 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig"/>
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Services/" />
+  <Folder Name="/src/Services/Registration/">
+    <Project Path="src/Services/Registration/Registration.Api/Registration.Api.csproj" />
+    <Project Path="src/Services/Registration/Registration.Domain/Registration.Domain.csproj" />
+    <Project Path="src/Services/Registration/Registration.Tests/Registration.Tests.csproj" />
+  </Folder>
+</Solution>
