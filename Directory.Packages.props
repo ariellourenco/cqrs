@@ -3,7 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="MediatR" Version="13.0.0" />
+    <PackageVersion Include="MediatR" Version="13.1.0" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="9.0.3" />
   </ItemGroup>
 
