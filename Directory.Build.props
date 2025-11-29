@@ -7,7 +7,7 @@
     <RepositoryUrl>https://github.com/ariellourenco/cqrs</RepositoryUrl>
 
     <AnalysisMode>Recommended</AnalysisMode>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
