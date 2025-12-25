@@ -1,0 +1,6 @@
+{
+  "xunit": {
+    "methodDisplay": "classAndMethod",
+    "methodDisplayOptions": "none"
+  }
+}

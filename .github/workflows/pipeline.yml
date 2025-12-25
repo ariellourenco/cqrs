@@ -9,6 +9,7 @@ on:
     paths-ignore:
       - '.vscode/*'
       - '**/*.md'
+      - '**/*.editorconfig'
       - '**/*.gitignore'
       - '**/*.gitattributes'
   pull_request:
@@ -54,28 +55,20 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore --nologo /p:ContinuousIntegrationBuild=true /p:SourceRevisionId=${{ github.sha }}
 
-    # Run tests (unit, integration and fuctional tests)
-    # Enforce a minimum coverage percent on all changes to the project.
-    # In case the results falls below 80% the build will automatically fail.
-    # 📚 https://github.com/coverlet-coverage/coverlet/blob/master/Documentation/MSBuildIntegration.md
+    # 🧪 Run tests (unit, integration and functional tests)
+    # using the new Microsoft Testing Platform.
     - name: Run Tests
       run: >-
-        dotnet test --configuration Release --logger "trx;LogFileName=results.trx" --no-build --nologo --results-directory ${{ env.BUILD_ARTIFACTS }}/test-results
-        /p:CollectCoverage=true
-        /p:ContinuousIntegrationBuild=true
-        /p:CoverletOutputFormat=cobertura
-        /p:CoverletOutput=${{ env.BUILD_ARTIFACTS }}/test-results/
-        /p:MergeWith=${{ env.BUILD_ARTIFACTS }}/test-results/report.cobertura.xml
-        /p:Threshold=80
-        /p:ThresholdType=line
-        /p:ThresholdStat=total
+        dotnet test --configuration Release --coverage --coverage-output-format cobertura --no-build --no-restore
+        --results-directory ${{ env.BUILD_ARTIFACTS }}/test-results
+        --report-trx
 
     # Upload coverage report to Codecov.
     - name: Upload Coverage
-      uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 #v5.5.1
+      uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de #v5.5.2
       with:
-        fail_ci_if_error: false
-        files: ${{ env.BUILD_ARTIFACTS }}/test-results/report.cobertura.xml
+        fail_ci_if_error: true
+        files: ${{ env.BUILD_ARTIFACTS }}/test-results/*.cobertura.xml
         flags: unittests # optional
         name: codecov-umbrella # optional
         token: ${{ secrets.CODECOV_TOKEN }}
