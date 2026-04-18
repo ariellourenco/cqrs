@@ -1,0 +1,10 @@
+name: CQRS CodeQL Config
+
+queries:
+  - uses: security-and-quality
+
+paths-ignore:
+  - '**/bin/**'
+  - '**/obj/**'
+  - '**/*.generated.cs'
+  - '**/Migrations/**'
