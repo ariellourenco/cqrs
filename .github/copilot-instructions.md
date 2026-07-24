@@ -12,59 +12,33 @@ generated code is correct and compilable.
 ### General Guidelines
 
 - Follow the [.NET coding guidelines](https://github.com/dotnet/runtime/blob/main/docs/coding-guidelines/coding-style.md) unless explicitly overridden below
-- Use the rules defined in the [.editorconfig](../.editorconfig) file in the root of the repository for any ambiguous cases
+- Formatting and naming are governed by the [.editorconfig](../.editorconfig) file and enforced by `dotnet format`. Follow it, and
+defer to it for any ambiguous cases
+- Use meaningful and descriptive names
 - Write code that is clean, maintainable, and easy to understand
 - Favor readability over brevity, but keep methods focused and concise
 - Only add comments rarely to explain why a non-intuitive solution was used. The code should be self-explanatory otherwise
 - Don't add the UTF-8 BOM to files unless they have non-ASCII characters
-- All types should be public. 
-- Avoid breaking public APIs. If you need to break a public API, add a new API instead and mark the old one as obsolete. Use 
+- Make only high confidence suggestions when reviewing code changes
+- All types should be public
+- Avoid breaking public APIs. If you need to break a public API, add a new API instead and mark the old one as obsolete. Use
 `ObsoleteAttribute` with the message pointing to the new API
-
-### Formatting
-
-- Use spaces for indentation (4 spaces)
-- Use braces for all blocks except for single-line blocks
-- Place braces on new lines
-- Limit line length to 140 characters
-- Trim trailing whitespace
-- All declarations must begin on a new line
-- Use a single blank line to separate logical sections of code when appropriate
-- Insert a final newline at the end of files
+- Never change [global.json](../global.json) unless explicitly asked to
+- Never change [nuget.config](../nuget.config) files unless explicitly asked to
 
 ### C# Specific Guidelines
 
-- File scoped namespace declarations
-- Use `var` for local variables
-- Use expression-bodied members where appropriate
 - Prefer using collection expressions when possible
-- Use `is` pattern matching instead of `as` and null checks
 - Prefer `switch` expressions over `switch` statements when appropriate
 - Prefer field-backed property declarations using field contextual keyword instead of an explicit field.
-- Prefer range and index from end operators for indexer access
 - The projects use implicit namespaces, so do not add `using` directives for namespaces that are already imported by the project
 - When verifying that a file doesn't produce compiler errors rebuild the whole project
-
-### Naming Conventions
-
-- Use PascalCase for:
-  - Classes, structs, enums, properties, methods, events, namespaces, delegates
-  - Public fields
-  - Constants
-- Use camelCase for:
-  - Parameters
-  - Local variables
-- Use `_camelCase` for instance private fields
-- Prefix interfaces with `I`
-- Prefix type parameters with `T`
-- Use meaningful and descriptive names
 
 ### Nullability
 
 - Declare variables non-nullable, and check for null at entry points.
 - Always use `is null` or `is not null` instead of `== null` or `!= null`.
 - Trust the C# null annotations and don't add null checks when the type system says a value cannot be null.
-- Use the null-conditional operator (`?.`) and null-coalescing operator (`??`) when appropriate
 
 ### Testing
 
@@ -90,10 +64,12 @@ generated code is correct and compilable.
 ## Asynchronous Programming
 
 - Use the `Async` suffix for asynchronous methods
-- Return `Task` or `ValueTask` from asynchronous methods
+- Always use `async`/`await`; never block on `.Result` or `.Wait()` (they can cause deadlocks and thread-pool starvation)
+- Return `Task` or `ValueTask` from asynchronous methods; use `ValueTask<T>` for hot paths that often complete synchronously
 - Use `CancellationToken` parameters to support cancellation
 - Avoid async void methods except for event handlers
-- Call `ConfigureAwait(false)` on awaited calls to avoid deadlocks
+- In shared library/infrastructure projects call `ConfigureAwait(false)` on awaited calls. This is unnecessary in the ASP.NET Core
+service projects, which have no synchronization context
 
 ## Performance Considerations
 
@@ -114,3 +90,19 @@ generated code is correct and compilable.
 - Next line optionally defines a summary of changes done and should focus on _Why_, not the _What_.
 - Wrap it to 76 columns per line.
 - Use emojis when possible
+
+## Documentation Resources
+
+If the `microsoft.docs.mcp` tool is available in your environment, you may use it to:
+
+- Look up current .NET best practices and patterns
+- Find official Microsoft documentation for APIs
+- Verify modern syntax and recommended approaches
+- Research performance optimization techniques
+
+### Query examples
+
+- "ASP.NET Core Minimal API typed results"
+- ".NET Aspire service defaults and orchestration"
+- "EF Core and event sourcing patterns"
+- "async await guidelines C#"

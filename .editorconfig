@@ -175,8 +175,8 @@ csharp_style_throw_expression = false:suggestion
 csharp_style_conditional_delegate_call = true:suggestion
 
 # Other features
-csharp_style_prefer_index_operator = false:none
-csharp_style_prefer_range_operator = false:none
+csharp_style_prefer_index_operator = true:suggestion
+csharp_style_prefer_range_operator = true:suggestion
 
 # Enable a subset of code-style analysis on build
 # https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview
