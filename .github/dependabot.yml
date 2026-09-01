@@ -3,10 +3,20 @@ updates:
   # Set update schedule for GitHub Actions and NuGet packages
   - package-ecosystem: "github-actions"
     directory: "/"
+    target-branch: "main"
     schedule:
       interval: "weekly"
 
   - package-ecosystem: "nuget"
     directory: "/"
+    target-branch: "main"
+    groups:
+      nuget:
+        patterns:
+          - "*"
+        update-types:
+          - "version-update:semver-patch"
+          - "version-update:semver-minor"
+          - "version-update:semver-major"
     schedule:
       interval: "weekly"
