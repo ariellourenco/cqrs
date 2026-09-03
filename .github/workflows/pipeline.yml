@@ -6,7 +6,7 @@ name: CI
 on:
   push:
     branches: [ main ]
-    paths-ignore:
+    paths-ignore: &paths-ignore
       - '.vscode/*'
       - '**/*.md'
       - '**/*.editorconfig'
@@ -14,6 +14,11 @@ on:
       - '**/*.gitattributes'
   pull_request:
     branches: [ main ]
+    paths-ignore: *paths-ignore
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   BUILD_ARTIFACTS: ${{ github.workspace }}/artifacts
@@ -33,9 +38,10 @@ jobs:
       with:
         fetch-depth: 0
         persist-credentials: false
+        ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
     - name: Install .NET Core SDK
-      uses: actions/setup-dotnet@v6
+      uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 #v6.0.0
       with:
         dotnet-version: 10.0.x
 
@@ -53,7 +59,10 @@ jobs:
 
     # Attempts to build and correlate generated assemblies with the commit.
     - name: Build
-      run: dotnet build --configuration Release --no-restore --nologo /p:ContinuousIntegrationBuild=true /p:SourceRevisionId=${{ github.sha }}
+      run: >-
+        dotnet build --configuration Release --no-restore --nologo
+        /p:ContinuousIntegrationBuild=true
+        /p:SourceRevisionId=${{ github.event.pull_request.head.sha || github.sha }}
 
     # 🧪 Run tests (unit, integration and functional tests)
     # using the new Microsoft Testing Platform.
@@ -61,6 +70,7 @@ jobs:
       run: >-
         dotnet test --configuration Release --coverage --coverage-output-format cobertura --no-build --no-restore
         --results-directory ${{ env.BUILD_ARTIFACTS }}/test-results
+        --report-gh
         --report-trx
 
     # Upload coverage report to Codecov.
